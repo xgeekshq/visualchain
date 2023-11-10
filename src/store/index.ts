@@ -7,12 +7,17 @@ const add = (value: number) => {
 }
 
 export const useStore = create((set, get) => ({
+  flows: [],
   nodes: [
-    { id: '1', position: { x: 0, y: 0 }, data: { input: "2" }, type: "input"  },
-    { id: '2', position: { x: 0, y: 100 }, data: { action: add }, type: "action" },
-    { id: '3', position: { x: 0, y: 200 }, data: { label: '' }, type: "output" },
+    { id: '1', position: { x: 0, y: 0 }, data: { input: "", label: "input" }, type: "input"  },
+    { id: '2', position: { x: 0, y: 100 }, data: { label: "action" }, type: "action" },
+    { id: '3', position: { x: 0, y: 200 }, data: { label: "action" }, type: "action" },
+    { id: '4', position: { x: 0, y: 300 }, data: { label: "stop" }, type: "stop" },
+    { id: '5', position: { x: 0, y: 400 }, data: { label: "stop" }, type: "stop" },
+    { id: '6', position: { x: 0, y: 500 }, data: { label: 'output' }, type: "action" },
   ],
-  edges: [{ id: 'e1-2', source: '1', target: '2' }],
+  edges: [],
+  
  
   onNodesChange(changes) {
     set({
@@ -42,4 +47,8 @@ export const useStore = create((set, get) => ({
  
     set({ edges: [edge, ...get().edges] });
   },
+
+  addFlow(newFlow) {
+    set({flows: [...get().flows, newFlow] })
+  }
 }));
