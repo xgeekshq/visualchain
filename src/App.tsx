@@ -12,26 +12,28 @@ const selector = (store) => ({
   onEdgesChange: store.onEdgesChange,
   addEdge: store.addEdge,
   updateNode: store.updateNode,
-  appendFlow: store.appendFlow
+  appendFlow: store.appendFlow,
 });
 
 export default function App() {
   const store = useStore(selector, shallow);
 
   function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
-    const currentNode = store.nodes.find(node => node.id === startNodeId);
+    const currentNode = store.nodes.find((node) => node.id === startNodeId);
 
     // If the current node is a "stop" type, add the current path to the list of all paths
-    if (currentNode.type === "stop") {
+    if (currentNode.type === 'stop') {
       allPaths.push([...currentPath, currentNode.id]);
       return;
     }
-  
+
     // Iterate through outgoing edges from the current node
-    const outgoingEdges = store.edges.filter(edge => edge.source === startNodeId);
+    const outgoingEdges = store.edges.filter(
+      (edge) => edge.source === startNodeId,
+    );
     for (const edge of outgoingEdges) {
       const nextNodeId = edge.target;
-  
+
       // Avoid cycles by checking if the next node is already in the current path
       if (!currentPath.includes(nextNodeId)) {
         // Recursively explore the next node
@@ -40,20 +42,12 @@ export default function App() {
     }
   }
 
-
   const handleRun = () => {
+    const input = store.nodes.find((val) => val.type === 'input');
 
-
-    const input = store.nodes.find((val) => val.type === "input")
-    
     let allPaths = [];
-    getAllFlows(input.id, [], allPaths)
-    console.log(allPaths)
-
-    
-
-    
-   
+    getAllFlows(input.id, [], allPaths);
+    console.log(allPaths);
 
     // const result = store.nodes.find((val) => val.type === "action").data.action(input)
 
@@ -64,22 +58,25 @@ export default function App() {
     // store.updateNode(output.id, { label: result })
 
     // console.log(store.edges)
-  }
+  };
 
   const isValidConnection = (connection) => {
-    const sourceNode = store.nodes.find((val) => val.id === connection.source)
+    const sourceNode = store.nodes.find((val) => val.id === connection.source);
 
-    const targetNode = store.nodes.find((val) => val.id === connection.target)
+    const targetNode = store.nodes.find((val) => val.id === connection.target);
 
-    if (sourceNode.type === "input" && targetNode.type === "action") {
-      return true
+    if (sourceNode.type === 'input' && targetNode.type === 'action') {
+      return true;
     }
 
-    if (sourceNode.type === "action" && targetNode.type === "output" || targetNode.type === "action") {
-      return true
+    if (
+      (sourceNode.type === 'action' && targetNode.type === 'output') ||
+      targetNode.type === 'action'
+    ) {
+      return true;
     }
 
-    return false
+    return false;
   };
 
   return (
