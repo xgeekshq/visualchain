@@ -15,6 +15,7 @@ const selector = (store) => ({
   addEdge: store.addEdge,
   updateNode: store.updateNode,
   appendFlow: store.appendFlow,
+  getNode: store.getNode,
   addNode: store.addNode,
 });
 
@@ -46,11 +47,20 @@ export default function App() {
   }
 
   const handleRun = () => {
-    const input = store.nodes.find((val) => val.type === 'start');
+    const startNode = store.nodes.find((val) => val.type === 'start');
+    if (!startNode) return;
 
     let allPaths = [];
-    getAllFlows(input.id, [], allPaths);
-    console.log(allPaths);
+    getAllFlows(startNode.id, [], allPaths);
+
+    if (allPaths.length <= 0) return;
+
+    for (const nodes of allPaths) {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = store.getNode(nodes[i]);
+        console.log(node.data);
+      }
+    }
   };
 
   return (
@@ -63,11 +73,15 @@ export default function App() {
         />
         <NavbarItem
           label="Input"
-          onClick={() => store.addNode({ label: <input type="text" /> })}
+          onClick={() => store.addNode({ type: 'userInput', label: 3 })}
         />
         <NavbarItem
           label="Operation"
           onClick={() => store.addNode({ type: 'operation', label: '+' })}
+        />
+        <NavbarItem
+          label="Output"
+          onClick={() => store.addNode({ type: 'display', label: '' })}
         />
         <NavbarItem
           label="Add End"

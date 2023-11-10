@@ -6,13 +6,17 @@ const useStore = create((set, get) => ({
   nodes: [],
   edges: [],
 
-  addNode({ type = 'default', label }: { type: string; label: string }) {
+  getNode(id: string) {
+    return get().nodes.find((node) => node.id === id);
+  },
+
+  addNode(data: Object, type: string) {
     const id = nanoid();
 
     const newNode = {
       id,
       position: { x: 0, y: 0 },
-      data: { label },
+      data,
       type,
     };
     set({ nodes: [...get().nodes, newNode] });
