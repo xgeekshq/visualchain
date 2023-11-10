@@ -3,50 +3,38 @@ import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 
 const add = (value: number) => {
-  return +value + +value;
+  return Number(value) + Number(value);
 };
 
-export const useStore = create((set, get) => ({
-  flows: [],
+const useStore = create((set, get) => ({
   nodes: [
-    {
-      id: '1',
-      position: { x: 0, y: 0 },
-      data: { input: '', label: 'input' },
-      type: 'input',
-    },
+    { id: '1', position: { x: 0, y: 0 }, data: { input: '2' }, type: 'input' },
     {
       id: '2',
       position: { x: 0, y: 100 },
-      data: { label: 'action' },
-      type: 'action',
+      data: { action: add },
+      type: 'default',
     },
     {
       id: '3',
       position: { x: 0, y: 200 },
-      data: { label: 'action' },
-      type: 'action',
-    },
-    {
-      id: '4',
-      position: { x: 0, y: 300 },
-      data: { label: 'stop' },
-      type: 'stop',
-    },
-    {
-      id: '5',
-      position: { x: 0, y: 400 },
-      data: { label: 'stop' },
-      type: 'stop',
-    },
-    {
-      id: '6',
-      position: { x: 0, y: 500 },
-      data: { label: 'output' },
-      type: 'action',
+      data: { label: '' },
+      type: 'output',
     },
   ],
-  edges: [],
+  edges: [{ id: 'e1-2', source: '1', target: '2' }],
+
+  addNode({ type = 'default', label }: { type: string; label: string }) {
+    const id = nanoid();
+
+    const newNode = {
+      id,
+      position: { x: 0, y: 0 },
+      data: { label },
+      type,
+    };
+    set({ nodes: [...get().nodes, newNode] });
+  },
 
   onNodesChange(changes) {
     set({
@@ -74,8 +62,6 @@ export const useStore = create((set, get) => ({
 
     set({ edges: [edge, ...get().edges] });
   },
-
-  addFlow(newFlow) {
-    set({ flows: [...get().flows, newFlow] });
-  },
 }));
+
+export default useStore;

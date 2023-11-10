@@ -1,8 +1,10 @@
 import ReactFlow, { Background, Controls, MiniMap } from 'reactflow';
 import { shallow } from 'zustand/shallow';
-import { useStore } from './store';
+import useStore from './store';
 
 import 'reactflow/dist/style.css';
+import Navbar from './components/Navbar/Navbar';
+import NavbarItem from './components/Navbar/NavbarItem';
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -13,6 +15,7 @@ const selector = (store) => ({
   addEdge: store.addEdge,
   updateNode: store.updateNode,
   appendFlow: store.appendFlow,
+  addNode: store.addNode,
 });
 
 export default function App() {
@@ -43,53 +46,40 @@ export default function App() {
   }
 
   const handleRun = () => {
-    const input = store.nodes.find((val) => val.type === 'input');
+    const input = store.nodes.find((val) => val.type === 'start');
 
     let allPaths = [];
     getAllFlows(input.id, [], allPaths);
     console.log(allPaths);
-
-    // const result = store.nodes.find((val) => val.type === "action").data.action(input)
-
-    // const output = store.nodes.find((val) => val.type === "output")
-
-    // console.log(output)
-
-    // store.updateNode(output.id, { label: result })
-
-    // console.log(store.edges)
-  };
-
-  const isValidConnection = (connection) => {
-    const sourceNode = store.nodes.find((val) => val.id === connection.source);
-
-    const targetNode = store.nodes.find((val) => val.id === connection.target);
-
-    if (sourceNode.type === 'input' && targetNode.type === 'action') {
-      return true;
-    }
-
-    if (
-      (sourceNode.type === 'action' && targetNode.type === 'output') ||
-      targetNode.type === 'action'
-    ) {
-      return true;
-    }
-
-    return false;
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <button onClick={handleRun}>Run</button>
+    <div className="flex w-full h-screen">
+      <Navbar>
+        <NavbarItem label="Run" onClick={handleRun} />
+        <NavbarItem
+          label="Add Start"
+          onClick={() => store.addNode({ type: 'start', label: 'Start' })}
+        />
+        <NavbarItem
+          label="Input"
+          onClick={() => store.addNode({ label: <input type="text" /> })}
+        />
+        <NavbarItem
+          label="Operation"
+          onClick={() => store.addNode({ type: 'operation', label: '+' })}
+        />
+        <NavbarItem
+          label="Add End"
+          onClick={() => store.addNode({ type: 'stop', label: 'End' })}
+        />
+      </Navbar>
       <ReactFlow
         nodes={store.nodes}
         edges={store.edges}
         onNodesChange={store.onNodesChange}
         onEdgesChange={store.onEdgesChange}
-        onConnect={store.addEdge}
-        // isValidConnection={isValidConnection}
-      >
+        onConnect={store.addEdge}>
         <Controls />
         <MiniMap />
         <Background variant="dots" gap={12} size={1} />
