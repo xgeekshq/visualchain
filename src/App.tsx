@@ -53,16 +53,17 @@ export default function App() {
 		}
 
 
-		if (sourceNode.type === "openAI" && (targetNode.type === "openAICompletion" || targetNode.type === "openAIImages")) {
+		if (sourceNode.type === "openAI" && (targetNode.type === "openAICompletion" || targetNode.type === "openAIImages" || sourceNode.type === "openAIWhisper")) {
 			return true
 		}
 
-		if ((sourceNode.type === "openAICompletion" || sourceNode.type === "openAIImages") && targetNode.type === "codeLanguage") {
+		if ((sourceNode.type === "openAICompletion" || sourceNode.type === "openAIImages" || sourceNode.type === "openAIWhisper") && targetNode.type === "codeLanguage") {
 			return true
 		}
 
+		console.log(sourceNode.type, targetNode.type)
 
-		if ((targetNode.type === "openAICompletion" || targetNode.type === "openAIImages") && targetNode.type === "stop") {
+		if (sourceNode.type === "codeLanguage" && targetNode.type === "end") {
 			return true
 		}
 
