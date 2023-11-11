@@ -1,6 +1,7 @@
 import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
+import { initOpenAI } from '../codeSnippets/python';
 
 const useStore = create((set, get) => ({
   nodes: [],
@@ -10,7 +11,7 @@ const useStore = create((set, get) => ({
     return get().nodes.find((node) => node.id === id);
   },
 
-  addNode(data: Object, type: string) {
+  addNode(data: object, type: string) {
     const id = nanoid();
 
     const newNode = {
@@ -54,7 +55,23 @@ const useStore = create((set, get) => ({
 
     switch (type) {
       case 'openAI': {
-        const data = { apiKey: '' };
+        const data = { apiKey: '', fn: initOpenAI };
+        const position = { x: 0, y: 0 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
+			case 'openAICompletion': {
+        const data = { model: 'gpt-3.5-turbo-1106', temperature: 0, prompt: '' };
+        const position = { x: 0, y: 0 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
+			case 'openAIImages': {
+        const data = { prompt: '', numImages: 1, height: 512, width: 512 };
         const position = { x: 0, y: 0 };
 
         set({ nodes: [...get().nodes, { id, type, data, position }] });

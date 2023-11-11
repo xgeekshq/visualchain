@@ -7,10 +7,14 @@ import "reactflow/dist/style.css";
 import Navbar from "./components/Navbar/Navbar";
 import NavbarItem from "./components/Navbar/NavbarItem";
 import OpenAI from "./nodes/OpenAI";
+import OpenAICompletion from "./nodes/OpenAICompletion";
+import OpenAIImages from "./nodes/OpenAIImage";
 
 const nodeTypes = {
-  openAI: OpenAI
-}
+	openAI: OpenAI,
+	openAICompletion: OpenAICompletion,
+	openAIImages: OpenAIImages,
+};
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -54,109 +58,83 @@ export default function App() {
     }
   }
 
-  const handleRun = () => {
-    let myJson = {}
-    const startNode = store.nodes.find((val) => val.type === "start");
-    if (!startNode) return;
+	const handleRun = () => {
+		const myJson = {};
+		const startNode = store.nodes.find((val) => val.type === "start");
+		if (!startNode) return;
 
     const allPaths = [];
     getAllFlows(startNode.id, [], allPaths);
 
     if (allPaths.length <= 0) return;
 
-    for (const nodes of allPaths) {
-      for (let i = 0; i < nodes.length; i++) {
-        const node = store.getNode(nodes[i]);
-        myJson[node.type] = node.data
-      }
-    }
+		for (const nodes of allPaths) {
+			for (let i = 0; i < nodes.length; i++) {
+				const node = store.getNode(nodes[i]);
+				console.log(node);
+				myJson[node.type] = node.data;
+			}
+		}
+		
+		for (const x in myJson){
+			// console.log(x, 'bananas');
+			// console.log(myJson[x]);
+			
+			if(x === 'start' || x === 'stop') continue;
+			const {fn, ...args} = myJson[x];
+			if(fn){
+				console.log(fn(args));
+				
+			}
+		}
+		console.log(JSON.stringify(myJson));
+	};
 
-    store.updateData(myJson)
-
-  };
-
-  console.log(store.data)
-
-  return (
-    <div className="flex w-full h-screen">
-      <Navbar>
-        <NavbarItem label="Run" onClick={handleRun} />
-        <NavbarItem
-          label="Add Start"
-          onClick={() => store.addNode({ label: "Start" }, 'start')}
-        />
-        <NavbarItem
-          label="Input"
-          onClick={() => store.addNode({ type: "userInput", label: 3 })}
-        />
-        <NavbarItem
-          label="OpenAi"
-          onClick={() => store.createNode("openAI")}
-        />
-        <NavbarItem
-          label="Operation"
-          onClick={() => store.addNode({ type: "operation", label: "+" })}
-        />
-        <NavbarItem
-          label="Output"
-          onClick={() => store.addNode({ type: "display", label: "" })}
-        />
-        <NavbarItem
-          label="Add End"
-          onClick={() => store.addNode({ label: "End" }, 'stop')}
-        />
-        <NavbarItem
-          label='Download'
-          onClick={() => {
-            let output = ``
-
-            for (const key in store.data) {
-              // console.log(key)
-              if (store.data.hasOwnProperty(key)) {
-                console.log(`${key} : ${store.data[key]}`)
-                if (key === "openAI") {
-                  // This is just a test!!
-                  let apiKey = store.data[key].apiKey
-
-                  output += `from openai import OpenAI
-
-client = OpenAI(
-    # defaults to os.environ.get("OPENAI_API_KEY")
-    api_key="${apiKey}",
-)
-
-chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": "Say this is a test",
-        }
-    ],
-    model="gpt-3.5-turbo",
-)
-
-print(chat_completion.choices[0].message.content)
-`
-                }
-              }
-            }
-
-            const file = new Blob([output], { type: 'text/plain;charset=utf-8' });
-            saveAs(file, 'hello_world.py');
-          }}
-        />
-      </Navbar>
-      <ReactFlow
-        nodes={store.nodes}
-        edges={store.edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={store.onNodesChange}
-        onEdgesChange={store.onEdgesChange}
-        onConnect={store.addEdge}>
-        <Controls />
-        <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
-      </ReactFlow>
-    </div>
-  );
+	return (
+		<div className="flex w-full h-screen">
+			<Navbar>
+				<NavbarItem label="Run" onClick={handleRun} />
+				<NavbarItem
+					label="Add Start"
+					onClick={() => store.addNode({ label: "Start" }, "start")}
+				/>
+				<NavbarItem
+					label="Input"
+					onClick={() => store.addNode({ type: "userInput", label: 3 })}
+				/>
+				<NavbarItem label="OpenAI" onClick={() => store.createNode("openAI")} />
+				<NavbarItem
+					label="OpenAICompletion"
+					onClick={() => store.createNode("openAICompletion")}
+				/>
+				<NavbarItem
+					label="OpenAIImages"
+					onClick={() => store.createNode("openAIImages")}
+				/>
+				<NavbarItem
+					label="Operation"
+					onClick={() => store.addNode({ type: "operation", label: "+" })}
+				/>
+				<NavbarItem
+					label="Output"
+					onClick={() => store.addNode({ type: "display", label: "" })}
+				/>
+				<NavbarItem
+					label="Add End"
+					onClick={() => store.addNode({ label: "End" }, "stop")}
+				/>
+			</Navbar>
+			<ReactFlow
+				nodes={store.nodes}
+				edges={store.edges}
+				nodeTypes={nodeTypes}
+				onNodesChange={store.onNodesChange}
+				onEdgesChange={store.onEdgesChange}
+				onConnect={store.addEdge}>
+				<Controls />
+				<MiniMap />
+				<Background variant="dots" gap={12} size={1} />
+			</ReactFlow>
+		</div>
+	);
 }
