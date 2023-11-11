@@ -21,15 +21,17 @@ async function explain(prompt, updateExplanation) {
       {
         role: 'system',
         content:
-          'You are a helpful code assistant. With many experience in software development, I will give you the code and you will explain it. Format the output as a HTML tags.',
+          'You are a helpful code assistant. With many experience in software development, I will give you the code and you will explain it shortly.',
       },
-      { role: 'user', content: prompt },
+      { role: 'user', content: prompt.replace(import.meta.env.VITE_OPENAI_API_KEY, '') },
     ],
     stream: true,
   });
 
   for await (const chunk of completion) {
-    updateExplanation(chunk.choices[0].delta.content);
+    if (chunk.choices[0].delta.content) {
+      updateExplanation(chunk.choices[0].delta.content);
+    }
   }
 }
 
@@ -55,7 +57,7 @@ export default function CodeBlock({ data }) {
       </p>
       <CopyBlock
         text={data.code}
-        language={data.language ?? 'js'}
+        language={data.language ?? 'py'}
         showLineNumbers={true}
         theme={dracula}
       />

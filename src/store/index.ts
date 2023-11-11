@@ -17,7 +17,7 @@ const useStore = create((set, get) => {
     edges: [],
     data: {},
     explanation: '',
-    language: 'js',
+    language: 'py',
 
     getNode(id: string) {
       return get().nodes.find((node) => node.id === id);

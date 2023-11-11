@@ -90,11 +90,11 @@ export default function App() {
   const isValidConnection = (connection) => {
     const sourceNode = store.nodes.find((val) => val.id === connection.source);
 
-    const targetNode = store.nodes.find((val) => val.id === connection.target);
-    console.log(sourceNode.type, targetNode.type);
-    if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
-      return true;
-    }
+		const targetNode = store.nodes.find((val) => val.id === connection.target);
+
+		if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
+			return true;
+		}
 
     if (
       sourceNode.type === 'openAI' &&
@@ -155,24 +155,22 @@ export default function App() {
 
     if (allPaths.length <= 0) return;
 
-    for (const nodes of allPaths) {
-      for (let i = 0; i < nodes.length; i++) {
-        const node = store.getNode(nodes[i]);
-        console.log(node);
-        myJson[node.type] = node.data;
-      }
-    }
+		for (const nodes of allPaths) {
+			for (let i = 0; i < nodes.length; i++) {
+				const node = store.getNode(nodes[i]);
+				myJson[node.type] = node.data;
+			}
+		}
 
-    let myCode = '';
-    console.log(store.language);
-    for (const x in myJson) {
-      if (x === 'start' || x === 'end' || x === 'codeLanguage') continue;
+		let myCode = "";
 
-      const { fn, ...args } = myJson[x];
+		for (const x in myJson) {
+			if (x === "start" || x === "end" || x === "codeLanguage") continue;
 
-      if (fn) {
-        myCode += fn({ ...args, language: store.language });
-        myCode += `
+			const { fn, ...args } = myJson[x];
+			if (fn) {
+				myCode += fn({ ...args, language: store.language });
+				myCode += `
 `;
       }
     }

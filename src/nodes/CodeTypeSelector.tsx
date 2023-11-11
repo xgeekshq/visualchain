@@ -4,8 +4,8 @@ import CustomHandle from "../components/Handler";
 import useStore from "../store";
 
 const models = [
-    { value: "js", name: "Javascript" },
-    { value: "py", name: "Python" }
+    { value: "py", name: "Python" },
+    { value: "js", name: "Javascript" }
 ];
 
 const selector = (id) => (store) => ({

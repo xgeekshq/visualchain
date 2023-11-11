@@ -5,22 +5,36 @@ import useStore from "../store";
 import CustomHandle from "../components/Handler";
 
 const selector = (id) => (store) => ({
+	setModel: (e) => store.updateNode(id, { model: e.target.value }),
 	setPrompt: (e) => store.updateNode(id, { prompt: e.target.value }),
 	setNumImages: (e) => store.updateNode(id, { numImages: e.target.value }),
 	setHeight: (e) => store.updateNode(id, { height: e.target.value }),
-	setWidth: (e) => store.updateNode(id, { width: e.target.value }),
+	setWidth: (e) => store.updateNode(id, { width: e.target.value })
 });
+
+const models = [
+	{ value: 'dall-e-2', name: 'Dall E 2' },
+	{ value: 'dall-e-3', name: 'Dall E 3' },
+];
 
 
 export default function OpenAIImages({ id, data }) {
 
-	const { setPrompt, setNumImages, setHeight, setWidth } = useStore(selector(id), shallow);
+	const { setPrompt, setNumImages, setHeight, setWidth, setModel } = useStore(selector(id), shallow);
 
 	return (
 		<div className="rounded-md bg-white shadow-xl border">
 			<p className={"rounded-t-md px-2 py-1 bg-yellow-500 text-white text-sm"}>
 				OpenAIImages
 			</p>
+			<label className="flex flex-col px-2 py-1">
+				<p className="text-xs font-bold mb-2">Model</p>
+				<select name="selectModel" onChange={setModel}>
+					{models.map((model) => (
+						<option value={model.value}>{model.name}</option>
+					))}
+				</select>
+			</label>
 			<label className="flex flex-col px-2 py-1">
 				<p className="text-xs font-bold mb-2">Prompt</p>
 				<textarea

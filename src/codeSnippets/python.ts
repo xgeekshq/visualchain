@@ -28,13 +28,13 @@ print(chat_completion.choices[0].message.content)
 
 export function openAIPYImageCompletion({
 	model,
-	numberOfImages,
+	numImages,
 	prompt,
 	height,
 	width
 }: {
 	model: string;
-	numberOfImages: number;
+	numImages: number;
 	prompt: string;
 	height: number;
 	width: number;
@@ -43,7 +43,7 @@ export function openAIPYImageCompletion({
 chat_completion = client.images.generate(
 	model="${model}",
 	prompt="${prompt}",
-	n=${numberOfImages},
+	n=${numImages},
 	size="${width}x${height}"
 )
 
@@ -58,5 +58,7 @@ transcript = client.audio.transcriptions.create(
   model="${model}", 
   file=audio_file
 )
+
+print(transcript.text)
 `
 }

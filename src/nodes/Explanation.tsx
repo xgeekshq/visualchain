@@ -12,7 +12,7 @@ export default function Explanation() {
 
 	
 	return (
-		<div className="flex flex-col rounded-md bg-white shadow-xl border w-[600px]">
+		<div className="flex flex-col rounded-md bg-white shadow-xl border w-[600px] z-[999999]">
 				<p className={"rounded-t-md px-2 py-1 bg-purple-500 text-white text-sm"}>
 				Code Explanation
 			</p>
