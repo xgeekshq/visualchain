@@ -48,3 +48,14 @@ export function openAIJSImageCompletion({
      }).then((result) => image.data[0].url);
 `;
 }
+
+export function openAIJSTranscription({filePath, model}: {filePath: string; model: string}) {
+    return `
+    const transcription = await openai.audio.transcriptions.create({
+        file: fs.createReadStream("${filePath}"),
+        model: "${model}",
+      });
+    
+      console.log(transcription.text);
+    `
+}

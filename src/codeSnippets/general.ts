@@ -1,5 +1,5 @@
-import { initJSOpenAI, openAIJSCompletion, openAIJSImageCompletion } from "./javascript";
-import { initPYOpenAI, openAIPYCompletion, openAIPYImageCompletion } from "./python";
+import { initJSOpenAI, openAIJSCompletion, openAIJSImageCompletion, openAIJSTranscription } from "./javascript";
+import { initPYOpenAI, openAIPYCompletion, openAIPYImageCompletion, openAIPYTranscription } from "./python";
 
 export function initOpenAI({ apiKey, language }: { apiKey: string, language: "js" | "py" }) {
     console.log("OLA", apiKey, language)
@@ -61,4 +61,16 @@ export function openAIImageCompletion({
             return openAIPYImageCompletion({model,numberOfImages,prompt,height,width})
         }
     } 
+}
+
+export function openAITranscription({filePath, model, language}: {filePath: string; model: string, language: "js" | "py" }) {
+    switch (language) {
+        case "js": {
+            return openAIJSTranscription({filePath, model})
+        }
+
+        case "py": {
+            return openAIPYTranscription({filePath, model})
+        }
+    }
 }

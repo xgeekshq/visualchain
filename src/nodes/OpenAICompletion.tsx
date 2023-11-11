@@ -6,7 +6,7 @@ import CustomHandle from '../components/Handler';
 
 const selector = (id) => (store) => ({
 	setModel: (e) => store.updateNode(id, { model: e.target.value }),
-	setTemperature: (e) => store.updateNode(id, { temperature: e.target.value }),
+	setTemperature: (e) => store.updateNode(id, { temperature: Number(e.target.value) }),
 	setPrompt: (e) => store.updateNode(id, { prompt: e.target.value }),
 });
 

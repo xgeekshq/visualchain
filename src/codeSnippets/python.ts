@@ -19,7 +19,7 @@ export function openAIPYCompletion({
 chat_completion = client.chat.completions.create(
   messages=[{"role": "user", "content": "${prompt}"}],
   model="${model}",
-  temperature="${temperature}"
+  temperature=${temperature}
 )
 
 print(chat_completion.choices[0].message.content)
@@ -41,12 +41,22 @@ export function openAIPYImageCompletion({
 }) {
 	return `
 chat_completion = client.images.generate(
-		model="${model}",
-		prompt="${prompt}",
-		n=${numberOfImages},
-		size="${width}x${height}"
-	)
+	model="${model}",
+	prompt="${prompt}",
+	n=${numberOfImages},
+	size="${width}x${height}"
+)
 
 print(chat_completion.data[0].url)
 `;
+}
+
+export function openAIPYTranscription({filePath, model}: {filePath: string; model: string}) {
+    return `
+audio_file = open("${filePath}", "rb")
+transcript = client.audio.transcriptions.create(
+  model="${model}", 
+  file=audio_file
+)
+`
 }
