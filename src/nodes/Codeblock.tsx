@@ -53,7 +53,7 @@ export default function CodeBlock({ data }) {
 			</p>
 			<CopyBlock
 				text={data.code}
-				language="js"
+				language={data.language ?? "js"}
 				showLineNumbers={true}
 				theme={dracula}
 			/>

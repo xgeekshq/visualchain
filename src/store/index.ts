@@ -114,6 +114,15 @@ const useStore = create((set, get) => ({
 
         break;
       }
+			case 'codeLanguage': {
+        const data = { language: "js" };
+
+        const position = { x: 100, y: 100 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
     }
   },
 

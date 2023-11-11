@@ -12,6 +12,7 @@ import End from "./nodes/End";
 import CodeBlock from "./nodes/Codeblock";
 import Start from "./nodes/Start";
 import Explanation from "./nodes/Explanation";
+import CodeTypeSelector from "./nodes/CodeTypeSelector";
 
 const nodeTypes = {
 	openAI: OpenAI,
@@ -21,6 +22,7 @@ const nodeTypes = {
 	start: Start,
 	codeBlock: CodeBlock,
 	explanation: Explanation,
+	codeLanguage: CodeTypeSelector
 };
 
 const selector = (store) => ({
@@ -40,6 +42,32 @@ const selector = (store) => ({
 
 export default function App() {
 	const store = useStore(selector, shallow);
+
+	const isValidConnection = (connection) => {
+		const sourceNode = store.nodes.find((val) => val.id === connection.source)
+
+		const targetNode = store.nodes.find((val) => val.id === connection.target)
+
+		if (sourceNode.type === "start" && targetNode.type === "openAI") {
+			return true
+		}
+
+
+		if (sourceNode.type === "openAI" && (targetNode.type === "openAICompletion" || targetNode.type === "openAIImages")) {
+			return true
+		}
+
+		if ((sourceNode.type === "openAICompletion" || sourceNode.type === "openAIImages") && targetNode.type === "codeLanguage") {
+			return true
+		}
+
+
+		if ((targetNode.type === "openAICompletion" || targetNode.type === "openAIImages") && targetNode.type === "stop") {
+			return true
+		}
+
+		return false
+	}
 
 	function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
 		const currentNode = store.nodes.find((node) => node.id === startNodeId);
@@ -107,7 +135,7 @@ export default function App() {
 			<Navbar>
 				<NavbarItem label="Run" onClick={() => handleRun()} />
 
-				<NavbarItem label="OpenAI" onClick={() => store.createNode("openAI")} />
+				<NavbarItem label="OpenAI key" onClick={() => store.createNode("openAI")} />
 				<NavbarItem
 					label="OpenAICompletion"
 					onClick={() => store.createNode("openAICompletion")}
@@ -116,6 +144,10 @@ export default function App() {
 					label="OpenAIImages"
 					onClick={() => store.createNode("openAIImages")}
 				/>
+				<NavbarItem
+					label="Code language"
+					onClick={() => store.createNode("codeLanguage")}
+				/>
 			</Navbar>
 			<ReactFlow
 				nodes={store.nodes}
@@ -123,7 +155,9 @@ export default function App() {
 				nodeTypes={nodeTypes}
 				onNodesChange={store.onNodesChange}
 				onEdgesChange={store.onEdgesChange}
-				onConnect={store.addEdge}>
+				onConnect={store.addEdge}
+				isValidConnection={isValidConnection}
+				>
 				<Controls />
 				<MiniMap />
 				<Background variant="dots" gap={12} size={1} />
