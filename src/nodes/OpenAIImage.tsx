@@ -13,6 +13,7 @@ const selector = (id) => (store) => ({
 
 
 export default function OpenAIImages({ id, data }) {
+
 	const { setPrompt, setNumImages, setHeight, setWidth } = useStore(selector(id), shallow);
 
 	return (
@@ -60,7 +61,7 @@ export default function OpenAIImages({ id, data }) {
 					onChange={setWidth}
 				/>
 			</label>
-			<CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={1} />
+			<CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={2} />
 			<CustomHandle className="w-2 h-2" type="target" position="top"  isConnectable={1} />
 		</div>
 	);

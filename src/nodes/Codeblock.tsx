@@ -4,9 +4,9 @@ import { saveAs } from 'file-saver';
 import { shallow } from 'zustand/shallow';
 import OpenAI from 'openai';
 
-function download(myCode) {
+function download(myCode, language) {
   const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
-  saveAs(file, 'askAI.py');
+  saveAs(file, `askAI.${language}`);
 }
 
 const openai = new OpenAI({
@@ -35,6 +35,7 @@ async function explain(prompt, updateExplanation) {
 
 const selector = (store) => ({
   data: store.data,
+  language: store.language,
   updateExplanation: store.updateExplanation,
   explanation: store.explanation,
   createNode: store.createNode,
@@ -61,7 +62,7 @@ export default function CodeBlock({ data }) {
       <div className="flex gap-4 py-2 justify-center">
         <button
           className="border bg-white rounded-md shadow-sm p-2"
-          onClick={() => download(store.data)}>
+          onClick={() => download(store.data, store.language)}>
           Download
         </button>
         <button className="border bg-white rounded-md shadow-sm p-2">

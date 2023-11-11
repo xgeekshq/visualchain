@@ -1,7 +1,12 @@
 import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
-import { initOpenAI, openAICompletion } from '../codeSnippets/python';
+import {
+  initOpenAI,
+  openAICompletion,
+  openAIImageCompletion,
+  openAITranscription,
+} from '../codeSnippets/general';
 
 const useStore = create((set, get) => ({
   nodes: [
@@ -11,6 +16,7 @@ const useStore = create((set, get) => ({
   edges: [],
   data: {},
   explanation: '',
+  language: 'js',
   getNode(id: string) {
     return get().nodes.find((node) => node.id === id);
   },
@@ -49,7 +55,7 @@ const useStore = create((set, get) => ({
   updateNode(id, data) {
     set({
       nodes: get().nodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node
       ),
     });
   },
@@ -81,7 +87,13 @@ const useStore = create((set, get) => ({
         break;
       }
       case 'openAIImages': {
-        const data = { prompt: '', numImages: 1, height: 512, width: 512 };
+        const data = {
+          prompt: '',
+          numImages: 1,
+          height: 512,
+          width: 512,
+          fn: openAIImageCompletion,
+        };
         set({ nodes: [...get().nodes, { id, type, data, position }] });
         break;
       }
@@ -110,6 +122,11 @@ const useStore = create((set, get) => ({
         set({ nodes: [...get().nodes, { id, type, data, position }] });
         break;
       }
+      case 'openAITranscription': {
+        const data = { filePath: '', fn: openAITranscription };
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+        break;
+      }
     }
   },
 
@@ -119,6 +136,9 @@ const useStore = create((set, get) => ({
 
   updateExplanation(newExplanation) {
     set({ explanation: get().explanation.concat(newExplanation) });
+  },
+  updateLanguage(newLanguage) {
+    set({ language: newLanguage });
   },
 }));
 

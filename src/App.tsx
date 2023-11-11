@@ -14,203 +14,211 @@ import Start from './nodes/Start';
 import Explanation from './nodes/Explanation';
 import CodeTypeSelector from './nodes/CodeTypeSelector';
 import { useCallback, useRef, useState } from 'react';
+import OpenAITranscription from './nodes/OpenAITranscription';
 
 const nodeTypes = {
-  openAI: OpenAI,
-  openAICompletion: OpenAICompletion,
-  openAIImages: OpenAIImages,
-  end: End,
-  start: Start,
-  codeBlock: CodeBlock,
-  explanation: Explanation,
-  codeLanguage: CodeTypeSelector,
+	openAI: OpenAI,
+	openAICompletion: OpenAICompletion,
+	openAIImages: OpenAIImages,
+	openAITranscription: OpenAITranscription,
+	end: End,
+	start: Start,
+	codeBlock: CodeBlock,
+	explanation: Explanation,
+	codeLanguage: CodeTypeSelector,
 };
 
 const selector = (store) => ({
-  nodes: store.nodes,
-  edges: store.edges,
-  data: store.data,
-  onNodesChange: store.onNodesChange,
-  onEdgesChange: store.onEdgesChange,
-  createNode: store.createNode,
-  addEdge: store.addEdge,
-  updateNode: store.updateNode,
-  appendFlow: store.appendFlow,
-  getNode: store.getNode,
-  addNode: store.addNode,
-  updateData: store.updateData,
+	nodes: store.nodes,
+	edges: store.edges,
+	data: store.data,
+	language: store.language,
+	onNodesChange: store.onNodesChange,
+	onEdgesChange: store.onEdgesChange,
+	createNode: store.createNode,
+	addEdge: store.addEdge,
+	updateNode: store.updateNode,
+	appendFlow: store.appendFlow,
+	getNode: store.getNode,
+	addNode: store.addNode,
+	updateData: store.updateData,
+	updateLanguage: store.updateLanguage
 });
 
 export default function App() {
-  const reactFlowWrapper = useRef(null);
-  const store = useStore(selector, shallow);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+	const reactFlowWrapper = useRef(null);
+	const store = useStore(selector, shallow);
+	const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const onDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
+	const onDragOver = useCallback((event) => {
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+	}, []);
 
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-      const type = event.dataTransfer.getData('application/reactflow');
-      if (typeof type === 'undefined' || !type) {
-        return;
-      }
+	const onDrop = useCallback(
+		(event) => {
+			event.preventDefault();
+			const type = event.dataTransfer.getData('application/reactflow');
+			if (typeof type === 'undefined' || !type) {
+				return;
+			}
 
-      const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
+			const position = reactFlowInstance.screenToFlowPosition({
+				x: event.clientX,
+				y: event.clientY,
+			});
 
-      store.createNode(type, position);
-    },
-    [reactFlowInstance],
-  );
+			store.createNode(type, position);
+		},
+		[reactFlowInstance],
+	);
 
-  const isValidConnection = (connection) => {
-    const sourceNode = store.nodes.find((val) => val.id === connection.source);
+	const isValidConnection = (connection) => {
+		const sourceNode = store.nodes.find((val) => val.id === connection.source);
 
-    const targetNode = store.nodes.find((val) => val.id === connection.target);
+		const targetNode = store.nodes.find((val) => val.id === connection.target);
+		console.log(sourceNode.type, targetNode.type)
+		if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
+			return true;
+		}
 
-    if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
-      return true;
-    }
+		if (
+			sourceNode.type === 'openAI' &&
+			(targetNode.type === 'openAICompletion' ||
+				targetNode.type === 'openAIImages' ||
+				targetNode.type === 'openAITranscription')
+		) {
+			return true;
+		}
 
-    if (
-      sourceNode.type === 'openAI' &&
-      (targetNode.type === 'openAICompletion' ||
-        targetNode.type === 'openAIImages' ||
-        sourceNode.type === 'openAIWhisper')
-    ) {
-      return true;
-    }
+		if (
+			(sourceNode.type === 'openAICompletion' ||
+				sourceNode.type === 'openAIImages' ||
+				sourceNode.type === 'openAITranscription') &&
+			targetNode.type === 'codeLanguage'
+		) {
+			return true;
+		}
 
-    if (
-      (sourceNode.type === 'openAICompletion' ||
-        sourceNode.type === 'openAIImages' ||
-        sourceNode.type === 'openAIWhisper') &&
-      targetNode.type === 'codeLanguage'
-    ) {
-      return true;
-    }
+		if (sourceNode.type === 'codeLanguage' && targetNode.type === 'end') {
+			return true;
+		}
 
-    console.log(sourceNode.type, targetNode.type);
+		return false;
+	};
 
-    if (sourceNode.type === 'codeLanguage' && targetNode.type === 'end') {
-      return true;
-    }
+	function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
+		const currentNode = store.nodes.find((node) => node.id === startNodeId);
 
-    return false;
-  };
+		// If the current node is a "stop" type, add the current path to the list of all paths
+		if (currentNode.type === 'end') {
+			allPaths.push([...currentPath, currentNode.id]);
+			return;
+		}
 
-  function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
-    const currentNode = store.nodes.find((node) => node.id === startNodeId);
+		// Iterate through outgoing edges from the current node
+		const outgoingEdges = store.edges.filter(
+			(edge) => edge.source === startNodeId,
+		);
+		for (const edge of outgoingEdges) {
+			const nextNodeId = edge.target;
 
-    // If the current node is a "stop" type, add the current path to the list of all paths
-    if (currentNode.type === 'end') {
-      allPaths.push([...currentPath, currentNode.id]);
-      return;
-    }
+			// Avoid cycles by checking if the next node is already in the current path
+			if (!currentPath.includes(nextNodeId)) {
+				// Recursively explore the next node
+				getAllFlows(nextNodeId, [...currentPath, currentNode.id], allPaths);
+			}
+		}
+	}
 
-    // Iterate through outgoing edges from the current node
-    const outgoingEdges = store.edges.filter(
-      (edge) => edge.source === startNodeId,
-    );
-    for (const edge of outgoingEdges) {
-      const nextNodeId = edge.target;
+	const handleRun = () => {
+		const myJson = {};
+		const startNode = store.nodes.find((val) => val.type === 'start');
+		if (!startNode) return;
 
-      // Avoid cycles by checking if the next node is already in the current path
-      if (!currentPath.includes(nextNodeId)) {
-        // Recursively explore the next node
-        getAllFlows(nextNodeId, [...currentPath, currentNode.id], allPaths);
-      }
-    }
-  }
+		const allPaths = [];
+		getAllFlows(startNode.id, [], allPaths);
 
-  const handleRun = () => {
-    const myJson = {};
-    const startNode = store.nodes.find((val) => val.type === 'start');
-    if (!startNode) return;
+		if (allPaths.length <= 0) return;
 
-    const allPaths = [];
-    getAllFlows(startNode.id, [], allPaths);
+		for (const nodes of allPaths) {
+			for (let i = 0; i < nodes.length; i++) {
+				const node = store.getNode(nodes[i]);
+				console.log(node);
+				myJson[node.type] = node.data;
+			}
+		}
 
-    if (allPaths.length <= 0) return;
+		let myCode = "";
+		console.log(store.language)
+		for (const x in myJson) {
+			if (x === "start" || x === "end" || x === "codeLanguage") continue;
 
-    for (const nodes of allPaths) {
-      for (let i = 0; i < nodes.length; i++) {
-        const node = store.getNode(nodes[i]);
-        console.log(node);
-        myJson[node.type] = node.data;
-      }
-    }
+			const { fn, ...args } = myJson[x];
 
-    let myCode = '';
-
-    for (const x in myJson) {
-      if (x === 'start' || x === 'end') continue;
-      console.log(x, 'bananas');
-
-      const { fn, ...args } = myJson[x];
-      if (fn) {
-        myCode += fn(args);
-        myCode += `
+			if (fn) {
+				myCode += fn({ ...args, language: store.language });
+				myCode += `
 `;
-      }
-    }
+			}
+		}
 
-    // console.log(myCode);
-    store.updateData(myCode);
-    store.createNode('codeBlock');
-  };
+		// console.log(myCode);
+		store.updateData(myCode);
+		store.createNode('codeBlock');
+	};
 
-  return (
-    <div className="flex w-full h-screen">
-      <Navbar>
-        <NavbarItem label="Run" onClick={() => handleRun()} />
-        <NavbarItem
-          label="OpenAI key"
-          type="openAI"
-          onClick={() => store.createNode('openAI')}
-          draggable
-        />
-        <NavbarItem
-          label="OpenAICompletion"
-          type="openAICompletion"
-          onClick={() => store.createNode('openAICompletion')}
-          draggable
-        />
-        <NavbarItem
-          label="OpenAIImages"
-          type="openAIImages"
-          onClick={() => store.createNode('openAIImages')}
-          draggable
-        />
-        <NavbarItem
-          label="Code language"
-          type="codeLanguage"
-          onClick={() => store.createNode('codeLanguage')}
-          draggable
-        />
-      </Navbar>
-      <ReactFlow
-        nodes={store.nodes}
-        edges={store.edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={store.onNodesChange}
-        onEdgesChange={store.onEdgesChange}
-        onConnect={store.addEdge}
-        isValidConnection={isValidConnection}
-        onInit={setReactFlowInstance}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        fitView>
-        <Controls />
-        <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
-      </ReactFlow>
-    </div>
-  );
+	return (
+		<div className="flex w-full h-screen">
+			<Navbar>
+				<NavbarItem label="Run" onClick={() => handleRun()} />
+				<NavbarItem
+					label="OpenAI key"
+					type="openAI"
+					onClick={() => store.createNode('openAI')}
+					draggable
+				/>
+				<NavbarItem
+					label="OpenAICompletion"
+					type="openAICompletion"
+					onClick={() => store.createNode('openAICompletion')}
+					draggable
+				/>
+				<NavbarItem
+					label="OpenAIImages"
+					type="openAIImages"
+					onClick={() => store.createNode('openAIImages')}
+					draggable
+				/>
+				<NavbarItem
+					label="OpenAITranscription"
+					type="openAITranscription"
+					onClick={() => store.createNode('openAITranscription')}
+					draggable
+				/>
+				<NavbarItem
+					label="Code language"
+					type="codeLanguage"
+					onClick={() => store.createNode('codeLanguage')}
+					draggable
+				/>
+			</Navbar>
+			<ReactFlow
+				nodes={store.nodes}
+				edges={store.edges}
+				nodeTypes={nodeTypes}
+				onNodesChange={store.onNodesChange}
+				onEdgesChange={store.onEdgesChange}
+				onConnect={store.addEdge}
+				isValidConnection={isValidConnection}
+				onInit={setReactFlowInstance}
+				onDrop={onDrop}
+				onDragOver={onDragOver}
+				fitView>
+				<Controls />
+				<MiniMap />
+				<Background variant="dots" gap={12} size={1} />
+			</ReactFlow>
+		</div>
+	);
 }
