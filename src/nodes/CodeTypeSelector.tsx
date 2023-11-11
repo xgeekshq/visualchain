@@ -1,7 +1,7 @@
 import React from "react";
-import { Handle, useStore } from "reactflow";
 import { shallow } from "zustand/shallow";
 import CustomHandle from "../components/Handler";
+import useStore from "../store";
 
 const models = [
     { value: "js", name: "Javascript" },
@@ -9,10 +9,13 @@ const models = [
 ];
 
 const selector = (id) => (store) => ({
-    setLanguage: (e) => store.updateNode(id, { language: e.target.value }),
+    setLanguage: (e) => {
+        store.updateNode(id, {language: e.target.value})
+        store.updateLanguage(e.target.value)
+    }
 });
 
-export default function CodeTypeSelector({ id, data }) {
+export default function CodeTypeSelector({ id }) {
     const { setLanguage } = useStore(selector(id), shallow);
 
     return (
@@ -22,13 +25,13 @@ export default function CodeTypeSelector({ id, data }) {
             </p>
             <label className="flex flex-col px-2 py-1">
                 <p className="text-xs font-bold mb-2">Language:</p>
-                <select name="selectModel">
+                <select name="selectModel" onChange={setLanguage}>
                     {models.map((model) => (
-                        <option value={model.value} onChange={setLanguage}>{model.name}</option>
+                        <option value={model.value}>{model.name}</option>
                     ))}
                 </select>
             </label>
-            <CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={1} />
+            <CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={2} />
             <CustomHandle className="w-2 h-2" type="target" position="top"  isConnectable={1}/>
         </div >
     );

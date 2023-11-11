@@ -1,4 +1,4 @@
-export function initOpenAI({ apiKey }: { apiKey: string }) {
+export function initJSOpenAI({ apiKey }: { apiKey: string }) {
 	return `
 const openai = require("OpenAI");
 
@@ -7,7 +7,7 @@ const client = new OpenAI({
 });`;
 }
 
-export function openAICompletion({
+export function openAIJSCompletion({
 	model,
 	temperature,
 	prompt,
@@ -22,5 +22,29 @@ const chatCompletion =  client.chat.completions.create({
     model: "${model}",
     temperature: ${temperature}
 }).then((result) => chatCompletion.choices[0].message.content);
+`;
+}
+
+export function openAIJSImageCompletion({
+	model,
+	numberOfImages,
+	prompt,
+	height,
+	width
+}: {
+	model: string;
+	numberOfImages: number;
+	prompt: string;
+	height: number;
+	width: number;
+}) {
+	return `
+
+    const image = openai.images.generate({
+        model: "${model}",
+        prompt: "${prompt}",
+        n: ${numberOfImages},
+        size:"${width}x${height}"
+     }).then((result) => image.data[0].url);
 `;
 }

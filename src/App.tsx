@@ -27,18 +27,20 @@ const nodeTypes = {
 };
 
 const selector = (store) => ({
-  nodes: store.nodes,
-  edges: store.edges,
-  data: store.data,
-  onNodesChange: store.onNodesChange,
-  onEdgesChange: store.onEdgesChange,
-  createNode: store.createNode,
-  addEdge: store.addEdge,
-  updateNode: store.updateNode,
-  appendFlow: store.appendFlow,
-  getNode: store.getNode,
-  addNode: store.addNode,
-  updateData: store.updateData,
+	nodes: store.nodes,
+	edges: store.edges,
+	data: store.data,
+	language: store.language,
+	onNodesChange: store.onNodesChange,
+	onEdgesChange: store.onEdgesChange,
+	createNode: store.createNode,
+	addEdge: store.addEdge,
+	updateNode: store.updateNode,
+	appendFlow: store.appendFlow,
+	getNode: store.getNode,
+	addNode: store.addNode,
+	updateData: store.updateData,
+	updateLanguage: store.updateLanguage
 });
 
 export default function App() {
@@ -147,16 +149,16 @@ export default function App() {
       }
     }
 
-    let myCode = '';
+	let myCode = "";
+	console.log(store.language)
+	for (const x in myJson) {
+		if (x === "start" || x === "end" || x === "codeLanguage") continue;
 
-    for (const x in myJson) {
-      if (x === 'start' || x === 'end') continue;
-      console.log(x, 'bananas');
+		const { fn, ...args } = myJson[x];
 
-      const { fn, ...args } = myJson[x];
-      if (fn) {
-        myCode += fn(args);
-        myCode += `
+		if (fn) {
+			myCode += fn({...args, language: store.language});
+			myCode += `
 `;
       }
     }
