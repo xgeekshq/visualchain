@@ -21,6 +21,15 @@ import CodeTypeSelector from './nodes/CodeTypeSelector';
 import { useCallback, useRef, useState } from 'react';
 import OpenAITranscription from './nodes/OpenAITranscription';
 
+import {
+  FiPlayCircle,
+  FiKey,
+  FiMessageSquare,
+  FiImage,
+  FiMusic,
+  FiSettings,
+} from 'react-icons/fi';
+
 const nodeTypes = {
   openAI: OpenAI,
   openAICompletion: OpenAICompletion,
@@ -176,36 +185,53 @@ export default function App() {
   return (
     <div className="flex w-full h-screen">
       <Navbar>
-        <NavbarItem label="Run" onClick={() => handleRun()} />
+        <div className="flex items-center w-full px-3 mt-3 text-sm font-bold">
+          OpenAI
+        </div>
         <NavbarItem
-          label="OpenAI key"
+          label="API Key"
           type="openAI"
+          icon={<FiKey />}
           onClick={() => store.createNode('openAI')}
           draggable
         />
         <NavbarItem
-          label="OpenAICompletion"
+          label="Completion"
           type="openAICompletion"
+          icon={<FiMessageSquare />}
           onClick={() => store.createNode('openAICompletion')}
           draggable
         />
         <NavbarItem
-          label="OpenAIImages"
+          label="Images"
           type="openAIImages"
+          icon={<FiImage />}
           onClick={() => store.createNode('openAIImages')}
           draggable
         />
         <NavbarItem
-          label="OpenAITranscription"
+          label="Transcription"
           type="openAITranscription"
+          icon={<FiMusic />}
           onClick={() => store.createNode('openAITranscription')}
           draggable
         />
+        <div className="w-full mt-3 border-t border-gray-700" />
+        <div className="flex items-center w-full px-3 mt-3 text-sm font-bold">
+          Options
+        </div>
         <NavbarItem
           label="Code language"
           type="codeLanguage"
+          icon={<FiSettings />}
           onClick={() => store.createNode('codeLanguage')}
           draggable
+        />
+        <div className="w-full mt-3 border-t border-gray-700" />
+        <NavbarItem
+          label="Run"
+          onClick={() => handleRun()}
+          icon={<FiPlayCircle />}
         />
       </Navbar>
       <ReactFlowProvider>
