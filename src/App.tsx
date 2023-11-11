@@ -1,6 +1,6 @@
 import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
 import { shallow } from "zustand/shallow";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 import useStore from "./store";
 
 import "reactflow/dist/style.css";
@@ -9,64 +9,66 @@ import NavbarItem from "./components/Navbar/NavbarItem";
 import OpenAI from "./nodes/OpenAI";
 import OpenAICompletion from "./nodes/OpenAICompletion";
 import OpenAIImages from "./nodes/OpenAIImage";
+import End from "./nodes/End";
 
 const nodeTypes = {
 	openAI: OpenAI,
 	openAICompletion: OpenAICompletion,
 	openAIImages: OpenAIImages,
+	end: End,
 };
 
 const selector = (store) => ({
-  nodes: store.nodes,
-  edges: store.edges,
-  data: store.data,
-  onNodesChange: store.onNodesChange,
-  onEdgesChange: store.onEdgesChange,
-  createNode: store.createNode,
-  addEdge: store.addEdge,
-  updateNode: store.updateNode,
-  appendFlow: store.appendFlow,
-  getNode: store.getNode,
-  addNode: store.addNode,
-  updateData: store.updateData
+	nodes: store.nodes,
+	edges: store.edges,
+	data: store.data,
+	onNodesChange: store.onNodesChange,
+	onEdgesChange: store.onEdgesChange,
+	createNode: store.createNode,
+	addEdge: store.addEdge,
+	updateNode: store.updateNode,
+	appendFlow: store.appendFlow,
+	getNode: store.getNode,
+	addNode: store.addNode,
+	updateData: store.updateData,
 });
 
 export default function App() {
-  const store = useStore(selector, shallow);
+	const store = useStore(selector, shallow);
 
-  function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
-    const currentNode = store.nodes.find((node) => node.id === startNodeId);
+	function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
+		const currentNode = store.nodes.find((node) => node.id === startNodeId);
 
-    // If the current node is a "stop" type, add the current path to the list of all paths
-    if (currentNode.type === "stop") {
-      allPaths.push([...currentPath, currentNode.id]);
-      return;
-    }
+		// If the current node is a "stop" type, add the current path to the list of all paths
+		if (currentNode.type === "stop") {
+			allPaths.push([...currentPath, currentNode.id]);
+			return;
+		}
 
-    // Iterate through outgoing edges from the current node
-    const outgoingEdges = store.edges.filter(
-      (edge) => edge.source === startNodeId
-    );
-    for (const edge of outgoingEdges) {
-      const nextNodeId = edge.target;
+		// Iterate through outgoing edges from the current node
+		const outgoingEdges = store.edges.filter(
+			(edge) => edge.source === startNodeId
+		);
+		for (const edge of outgoingEdges) {
+			const nextNodeId = edge.target;
 
-      // Avoid cycles by checking if the next node is already in the current path
-      if (!currentPath.includes(nextNodeId)) {
-        // Recursively explore the next node
-        getAllFlows(nextNodeId, [...currentPath, currentNode.id], allPaths);
-      }
-    }
-  }
+			// Avoid cycles by checking if the next node is already in the current path
+			if (!currentPath.includes(nextNodeId)) {
+				// Recursively explore the next node
+				getAllFlows(nextNodeId, [...currentPath, currentNode.id], allPaths);
+			}
+		}
+	}
 
 	const handleRun = () => {
 		const myJson = {};
 		const startNode = store.nodes.find((val) => val.type === "start");
 		if (!startNode) return;
 
-    const allPaths = [];
-    getAllFlows(startNode.id, [], allPaths);
+		const allPaths = [];
+		getAllFlows(startNode.id, [], allPaths);
 
-    if (allPaths.length <= 0) return;
+		if (allPaths.length <= 0) return;
 
 		for (const nodes of allPaths) {
 			for (let i = 0; i < nodes.length; i++) {
@@ -75,19 +77,29 @@ export default function App() {
 				myJson[node.type] = node.data;
 			}
 		}
-		
-		for (const x in myJson){
-			// console.log(x, 'bananas');
-			// console.log(myJson[x]);
+
+		let myCode = '';
+
+		for (const x in myJson) {
+			if (x === "start" || x === "end") continue;
+			console.log(x, 'bananas');
 			
-			if(x === 'start' || x === 'stop') continue;
-			const {fn, ...args} = myJson[x];
-			if(fn){
-				console.log(fn(args));
+			const { fn, ...args } = myJson[x];
+			if (fn) {
+
+				myCode += fn(args)
+				myCode += `
 				
+				`
 			}
 		}
-		console.log(JSON.stringify(myJson));
+
+		// console.log(myCode);
+		store.updateData(myCode);
+
+		const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
+		saveAs(file, 'hello_world.py');
+
 	};
 
 	return (
@@ -98,10 +110,6 @@ export default function App() {
 					label="Add Start"
 					onClick={() => store.addNode({ label: "Start" }, "start")}
 				/>
-				<NavbarItem
-					label="Input"
-					onClick={() => store.addNode({ type: "userInput", label: 3 })}
-				/>
 				<NavbarItem label="OpenAI" onClick={() => store.createNode("openAI")} />
 				<NavbarItem
 					label="OpenAICompletion"
@@ -111,17 +119,9 @@ export default function App() {
 					label="OpenAIImages"
 					onClick={() => store.createNode("openAIImages")}
 				/>
-				<NavbarItem
-					label="Operation"
-					onClick={() => store.addNode({ type: "operation", label: "+" })}
-				/>
-				<NavbarItem
-					label="Output"
-					onClick={() => store.addNode({ type: "display", label: "" })}
-				/>
-				<NavbarItem
-					label="Add End"
-					onClick={() => store.addNode({ label: "End" }, "stop")}
+		<NavbarItem
+					label="End"
+					onClick={() => store.createNode("end")}
 				/>
 			</Navbar>
 			<ReactFlow

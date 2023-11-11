@@ -1,7 +1,7 @@
 import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
-import { initOpenAI } from '../codeSnippets/python';
+import { initOpenAI, openAICompletion } from '../codeSnippets/python';
 
 const useStore = create((set, get) => ({
   nodes: [],
@@ -63,7 +63,7 @@ const useStore = create((set, get) => ({
         break;
       }
 			case 'openAICompletion': {
-        const data = { model: 'gpt-3.5-turbo-1106', temperature: 0, prompt: '' };
+        const data = { model: 'gpt-3.5-turbo-1106', temperature: 0, prompt: '', fn: openAICompletion };
         const position = { x: 0, y: 0 };
 
         set({ nodes: [...get().nodes, { id, type, data, position }] });
@@ -75,6 +75,14 @@ const useStore = create((set, get) => ({
         const position = { x: 0, y: 0 };
 
         set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
+			case 'end': {
+        
+        const position = { x: 0, y: 0 };
+
+        set({ nodes: [...get().nodes, { id, type, position }] });
 
         break;
       }
