@@ -28,6 +28,13 @@ const useStore = create((set, get) => ({
   },
 
   onNodesChange(changes) {
+    const removeNode = changes.find((c) => c.type === 'remove');
+    if (removeNode) {
+      const nodeToRemove = get().nodes.find((n) => n.id === removeNode.id);
+
+      if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end') return;
+    }
+
     set({
       nodes: applyNodeChanges(changes, get().nodes),
     });
