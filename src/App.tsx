@@ -1,6 +1,5 @@
 import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
 import { shallow } from "zustand/shallow";
-import { saveAs } from "file-saver";
 import useStore from "./store";
 
 import "reactflow/dist/style.css";
@@ -10,12 +9,18 @@ import OpenAI from "./nodes/OpenAI";
 import OpenAICompletion from "./nodes/OpenAICompletion";
 import OpenAIImages from "./nodes/OpenAIImage";
 import End from "./nodes/End";
+import CodeBlock from "./nodes/Codeblock";
+import Start from "./nodes/Start";
+import Explanation from "./nodes/Explanation";
 
 const nodeTypes = {
 	openAI: OpenAI,
 	openAICompletion: OpenAICompletion,
 	openAIImages: OpenAIImages,
 	end: End,
+	start: Start,
+	codeBlock: CodeBlock,
+	explanation: Explanation,
 };
 
 const selector = (store) => ({
@@ -40,7 +45,7 @@ export default function App() {
 		const currentNode = store.nodes.find((node) => node.id === startNodeId);
 
 		// If the current node is a "stop" type, add the current path to the list of all paths
-		if (currentNode.type === "stop") {
+		if (currentNode.type === "end") {
 			allPaths.push([...currentPath, currentNode.id]);
 			return;
 		}
@@ -78,38 +83,32 @@ export default function App() {
 			}
 		}
 
-		let myCode = '';
+		let myCode = "";
 
 		for (const x in myJson) {
 			if (x === "start" || x === "end") continue;
-			console.log(x, 'bananas');
-			
+			console.log(x, "bananas");
+
 			const { fn, ...args } = myJson[x];
 			if (fn) {
-
-				myCode += fn(args)
+				myCode += fn(args);
 				myCode += `
-				
-				`
+`;
 			}
 		}
 
 		// console.log(myCode);
 		store.updateData(myCode);
-
-		const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
-		saveAs(file, 'hello_world.py');
-
+		store.createNode("codeBlock");
 	};
 
 	return (
 		<div className="flex w-full h-screen">
 			<Navbar>
-				<NavbarItem label="Run" onClick={handleRun} />
-				<NavbarItem
-					label="Add Start"
-					onClick={() => store.addNode({ label: "Start" }, "start")}
-				/>
+				<NavbarItem label="Run" onClick={() => handleRun()} />
+
+				<NavbarItem label="Start" onClick={() => store.createNode("start")} />
+
 				<NavbarItem label="OpenAI" onClick={() => store.createNode("openAI")} />
 				<NavbarItem
 					label="OpenAICompletion"
@@ -119,10 +118,7 @@ export default function App() {
 					label="OpenAIImages"
 					onClick={() => store.createNode("openAIImages")}
 				/>
-		<NavbarItem
-					label="End"
-					onClick={() => store.createNode("end")}
-				/>
+				<NavbarItem label="End" onClick={() => store.createNode("end")} />
 			</Navbar>
 			<ReactFlow
 				nodes={store.nodes}

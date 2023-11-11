@@ -1,7 +1,9 @@
 export function initOpenAI({ apiKey }: { apiKey: string }) {
-	return `from openai import OpenAI
+	return `
+from openai import OpenAI
   
-  client = OpenAI(api_key="${apiKey}")`;
+client = OpenAI(api_key="${apiKey}")
+`;
 }
 
 export function openAICompletion({
@@ -13,15 +15,11 @@ export function openAICompletion({
 	temperature: number;
 	prompt: string;
 }) {
-	return `chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": "${prompt}",
-        }
-    ],
-    model="${model}",
-    temperature="${temperature}"
+	return `
+chat_completion = client.chat.completions.create(
+  messages=[{"role": "user", "content": "${prompt}"}],
+  model="${model}",
+  temperature="${temperature}"
 )
 
 print(chat_completion.choices[0].message.content)

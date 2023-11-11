@@ -7,6 +7,7 @@ const useStore = create((set, get) => ({
   nodes: [],
   edges: [],
   data: {},
+	explanation: '',
   getNode(id: string) {
     return get().nodes.find((node) => node.id === id);
   },
@@ -78,11 +79,37 @@ const useStore = create((set, get) => ({
 
         break;
       }
+			case 'start': {
+        
+        const position = { x: 0, y: 0 };
+
+        set({ nodes: [...get().nodes, { id, type, position }] });
+
+        break;
+      }
 			case 'end': {
         
         const position = { x: 0, y: 0 };
 
         set({ nodes: [...get().nodes, { id, type, position }] });
+
+        break;
+      }
+			case 'codeBlock': {
+				const data = {  code: get().data };
+
+        const position = { x: 200, y: 300 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
+			case 'explanation': {
+				const data = {  code: get().data };
+
+        const position = { x: 100, y: 100 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
 
         break;
       }
@@ -92,6 +119,10 @@ const useStore = create((set, get) => ({
   updateData(newData) {
     set({data: newData })
   },
+
+	updateExplanation(newExplanation){
+		set({explanation: get().explanation.concat(newExplanation)})
+	}
 }));
 
 export default useStore;
