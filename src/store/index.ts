@@ -63,11 +63,8 @@ const useStore = create((set, get) => ({
       }
     }
   },
-  
-  updateData(key, value) {
-    let newData = get().data
-    newData[key] = value
 
+  updateData(newData) {
     set({data: newData })
   },
 }));
