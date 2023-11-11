@@ -12,17 +12,17 @@ const nodeTypes = {
 }
 
 const selector = (store) => ({
-	nodes: store.nodes,
-	edges: store.edges,
-	data: store.data,
-	onNodesChange: store.onNodesChange,
-	onEdgesChange: store.onEdgesChange,
-	addEdge: store.addEdge,
-	updateNode: store.updateNode,
-	appendFlow: store.appendFlow,
-	getNode: store.getNode,
-	addNode: store.addNode,
-	createNode: store.createNode,
+  nodes: store.nodes,
+  edges: store.edges,
+  data: store.data,
+  onNodesChange: store.onNodesChange,
+  onEdgesChange: store.onEdgesChange,
+  addEdge: store.addEdge,
+  updateNode: store.updateNode,
+  appendFlow: store.appendFlow,
+  getNode: store.getNode,
+  addNode: store.addNode,
+  updateData: store.updateData
 });
 
 export default function App() {

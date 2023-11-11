@@ -5,7 +5,7 @@ import { create } from 'zustand';
 const useStore = create((set, get) => ({
   nodes: [],
   edges: [],
-
+  data: {},
   getNode(id: string) {
     return get().nodes.find((node) => node.id === id);
   },
@@ -62,6 +62,13 @@ const useStore = create((set, get) => ({
         break;
       }
     }
+  },
+  
+  updateData(key, value) {
+    let newData = get().data
+    newData[key] = value
+
+    set({data: newData })
   },
 }));
 
