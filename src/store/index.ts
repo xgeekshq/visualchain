@@ -4,11 +4,13 @@ import { create } from 'zustand';
 import { initOpenAI, openAICompletion } from '../codeSnippets/python';
 
 const useStore = create((set, get) => ({
-  nodes: [{ id:nanoid(), type:'start', position: { x: 50, y: 50 } },
-  { id:nanoid(), type:'end', position: { x: 50, y: 700 } }],
+  nodes: [
+    { id: nanoid(), type: 'start', position: { x: 50, y: 50 } },
+    { id: nanoid(), type: 'end', position: { x: 50, y: 700 } },
+  ],
   edges: [],
   data: {},
-	explanation: '',
+  explanation: '',
   getNode(id: string) {
     return get().nodes.find((node) => node.id === id);
   },
@@ -52,87 +54,65 @@ const useStore = create((set, get) => ({
     set({ edges: [edge, ...get().edges] });
   },
 
-	createNode(type) {
+  createNode(type, position = { x: 0, y: 0 }) {
     const id = nanoid();
 
     switch (type) {
       case 'openAI': {
         const data = { apiKey: '', fn: initOpenAI };
-        const position = { x: 0, y: 0 };
-
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
-			case 'openAICompletion': {
-        const data = { model: 'gpt-3.5-turbo-1106', temperature: 0, prompt: '', fn: openAICompletion };
-        const position = { x: 0, y: 0 };
-
+      case 'openAICompletion': {
+        const data = {
+          model: 'gpt-3.5-turbo-1106',
+          temperature: 0,
+          prompt: '',
+          fn: openAICompletion,
+        };
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
-			case 'openAIImages': {
+      case 'openAIImages': {
         const data = { prompt: '', numImages: 1, height: 512, width: 512 };
-        const position = { x: 0, y: 0 };
-
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
-			case 'start': {
-        
-        const position = { x: 0, y: 0 };
-
+      case 'start': {
         set({ nodes: [...get().nodes, { id, type, position }] });
-
         break;
       }
-			case 'end': {
-        
-        const position = { x: 0, y: 0 };
-
+      case 'end': {
         set({ nodes: [...get().nodes, { id, type, position }] });
-
         break;
       }
-			case 'codeBlock': {
-				const data = {  code: get().data };
-
+      case 'codeBlock': {
+        const data = { code: get().data };
         const position = { x: 200, y: 300 };
-
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
-			case 'explanation': {
-				const data = {  code: get().data };
-
+      case 'explanation': {
+        const data = { code: get().data };
         const position = { x: 100, y: 100 };
-
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
-			case 'codeLanguage': {
-        const data = { language: "js" };
-
-        const position = { x: 100, y: 100 };
-
+      case 'codeLanguage': {
+        const data = { language: 'js' };
         set({ nodes: [...get().nodes, { id, type, data, position }] });
-
         break;
       }
     }
   },
 
   updateData(newData) {
-    set({data: newData })
+    set({ data: newData });
   },
 
-	updateExplanation(newExplanation){
-		set({explanation: get().explanation.concat(newExplanation)})
-	}
+  updateExplanation(newExplanation) {
+    set({ explanation: get().explanation.concat(newExplanation) });
+  },
 }));
 
 export default useStore;
