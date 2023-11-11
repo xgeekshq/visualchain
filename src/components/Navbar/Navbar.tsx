@@ -6,8 +6,15 @@ type NavbarProps = {
 
 const Navbar = ({ children }: NavbarProps) => {
   return (
-    <nav className="w-[210px] p-2">
-      <ul className="flex flex-col gap-2">{children}</ul>
+    <nav className="flex flex-col items-center w-[210px] h-full overflow-hidden text-gray-400 bg-gray-900 rounded-tr-md rounded-br-md">
+      <div className="flex items-center justify-center w-full px-3 mt-3 text-sm font-bold">
+        VisualChain
+      </div>
+      <div className="w-full px-2">
+        <div className="flex flex-col items-center w-full mt-3 border-t border-gray-700">
+          {children}
+        </div>
+      </div>
     </nav>
   );
 };

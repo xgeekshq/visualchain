@@ -17,13 +17,13 @@ const NavbarItem = ({
   };
 
   return (
-    <li
-      className="bg-green-700 text-white text-lg py-2 cursor-pointer text-center rounded-md"
+    <div
+      className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-700 hover:text-gray-300"
       onClick={onClick}
       onDragStart={(e) => onDragStart(e, type)}
       draggable={draggable}>
-      {label}
-    </li>
+      <span className="ml-2 text-sm font-medium">{label}</span>
+    </div>
   );
 };
 
