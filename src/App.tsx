@@ -107,8 +107,6 @@ export default function App() {
 			<Navbar>
 				<NavbarItem label="Run" onClick={() => handleRun()} />
 
-				<NavbarItem label="Start" onClick={() => store.createNode("start")} />
-
 				<NavbarItem label="OpenAI" onClick={() => store.createNode("openAI")} />
 				<NavbarItem
 					label="OpenAICompletion"
@@ -118,7 +116,6 @@ export default function App() {
 					label="OpenAIImages"
 					onClick={() => store.createNode("openAIImages")}
 				/>
-				<NavbarItem label="End" onClick={() => store.createNode("end")} />
 			</Navbar>
 			<ReactFlow
 				nodes={store.nodes}

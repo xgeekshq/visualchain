@@ -6,7 +6,7 @@ import OpenAI from "openai";
 
 function download(myCode) {
 	const file = new Blob([myCode], { type: "text/plain;charset=utf-8" });
-	saveAs(file, "hello_world.js");
+	saveAs(file, "askAI.py");
 }
 
 const openai = new OpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true });

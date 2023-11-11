@@ -4,7 +4,8 @@ import { create } from 'zustand';
 import { initOpenAI, openAICompletion } from '../codeSnippets/python';
 
 const useStore = create((set, get) => ({
-  nodes: [],
+  nodes: [{ id:nanoid(), type:'start', position: { x: 50, y: 50 } },
+  { id:nanoid(), type:'end', position: { x: 50, y: 700 } }],
   edges: [],
   data: {},
 	explanation: '',
