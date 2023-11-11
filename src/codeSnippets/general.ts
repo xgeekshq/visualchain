@@ -39,26 +39,27 @@ export function openAICompletion({
 
 export function openAIImageCompletion({
 	model,
-	numberOfImages,
+	numImages,
 	prompt,
 	height,
 	width,
     language
 }: {
 	model: string;
-	numberOfImages: number;
+	numImages: number;
 	prompt: string;
 	height: number;
 	width: number;
     language: "js" | "py"
 }) {
+    console.log("??", numImages)
 	switch (language) {
         case "js": {
-            return openAIJSImageCompletion({model,numberOfImages,prompt,height, width})
+            return openAIJSImageCompletion({model,numImages,prompt,height, width})
         }
 
         case "py": {
-            return openAIPYImageCompletion({model,numberOfImages,prompt,height,width})
+            return openAIPYImageCompletion({model,numImages,prompt,height,width})
         }
     } 
 }

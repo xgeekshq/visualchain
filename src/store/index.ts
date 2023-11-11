@@ -17,7 +17,7 @@ const useStore = create((set, get) => {
     edges: [],
     data: {},
     explanation: '',
-    language: 'js',
+    language: 'py',
 
     getNode(id: string) {
       return get().nodes.find((node) => node.id === id);
@@ -92,9 +92,10 @@ const useStore = create((set, get) => {
         case 'openAIImages': {
           const data = {
             prompt: '',
+            model: "dall-e-2",
             numImages: 1,
-            height: 512,
-            width: 512,
+            height: 1024,
+            width: 1024,
             fn: openAIImageCompletion,
           };
           set({ nodes: [...get().nodes, { id, type, data, position }] });
@@ -126,7 +127,7 @@ const useStore = create((set, get) => {
           break;
         }
         case 'openAITranscription': {
-          const data = { filePath: '', fn: openAITranscription };
+          const data = { filePath: '', model: "whisper-1", fn: openAITranscription };
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }

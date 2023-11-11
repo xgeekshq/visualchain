@@ -1,6 +1,7 @@
 export function initJSOpenAI({ apiKey }: { apiKey: string }) {
 	return `
-const openai = require("OpenAI");
+import OpenAI from "openai";
+import fs from "fs";
 
 const client = new OpenAI({
     apiKey: ${apiKey}
@@ -17,45 +18,48 @@ export function openAIJSCompletion({
 	prompt: string;
 }) {
 	return `
-const chatCompletion =  client.chat.completions.create({
+const chatCompletion = await client.chat.completions.create({
     messages: [{ role: "user", content: "${prompt}" }],
     model: "${model}",
     temperature: ${temperature}
-}).then((result) => chatCompletion.choices[0].message.content);
+});
+
+console.log(chatCompletion.choices[0].message.content)
 `;
 }
 
 export function openAIJSImageCompletion({
 	model,
-	numberOfImages,
+	numImages,
 	prompt,
 	height,
 	width
 }: {
 	model: string;
-	numberOfImages: number;
+	numImages: number;
 	prompt: string;
 	height: number;
 	width: number;
 }) {
 	return `
-
-    const image = openai.images.generate({
-        model: "${model}",
-        prompt: "${prompt}",
-        n: ${numberOfImages},
-        size:"${width}x${height}"
-     }).then((result) => image.data[0].url);
+const image = await client.images.generate({
+    model: "${model}",
+    prompt: "${prompt}",
+    n: ${numImages},
+    size:"${width}x${height}"
+})
+    
+console.log(image.data[0].url)
 `;
 }
 
 export function openAIJSTranscription({filePath, model}: {filePath: string; model: string}) {
     return `
-    const transcription = await openai.audio.transcriptions.create({
-        file: fs.createReadStream("${filePath}"),
-        model: "${model}",
-      });
+const transcription = await client.audio.transcriptions.create({
+    file: fs.createReadStream("${filePath}"),
+    model: "${model}",
+});
     
-      console.log(transcription.text);
-    `
+console.log(transcription.text);
+`
 }
