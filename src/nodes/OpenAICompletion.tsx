@@ -2,6 +2,7 @@ import React from "react";
 import { Handle } from "reactflow";
 import { shallow } from "zustand/shallow";
 import useStore from "../store";
+import CustomHandle from "../components/Handler";
 
 const selector = (id) => (store) => ({
 	setModel: (e) => store.updateNode(id, { model: e.target.value }),
@@ -52,8 +53,8 @@ export default function OpenAICompletion({ id, data }) {
 					rows={4} cols={40}
 				/>
 			</label>
-			<Handle className="w-2 h-2" type="source" position="bottom" />
-			<Handle className="w-2 h-2" type="target" position="top" />
+			<CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={1} />
+			<CustomHandle className="w-2 h-2" type="target" position="top"  isConnectable={1} />
 		</div>
 	);
 }

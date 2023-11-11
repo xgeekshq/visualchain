@@ -1,6 +1,7 @@
 import React from "react";
 import { Handle, useStore } from "reactflow";
 import { shallow } from "zustand/shallow";
+import CustomHandle from "../components/Handler";
 
 const models = [
     { value: "js", name: "Javascript" },
@@ -27,8 +28,8 @@ export default function CodeTypeSelector({ id, data }) {
                     ))}
                 </select>
             </label>
-            <Handle className="w-2 h-2" type="source" position="bottom" />
-            <Handle className="w-2 h-2" type="target" position="top" />
+            <CustomHandle className="w-2 h-2" type="source" position="bottom"  isConnectable={1} />
+            <CustomHandle className="w-2 h-2" type="target" position="top"  isConnectable={1}/>
         </div >
     );
 }

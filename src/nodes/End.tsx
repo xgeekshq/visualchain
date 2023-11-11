@@ -1,5 +1,6 @@
 import React from "react";
 import { Handle } from "reactflow";
+import CustomHandle from "../components/Handler";
 
 export default function End() {
 	return (
@@ -7,7 +8,7 @@ export default function End() {
 			<label className="flex px-2 py-1 w-full  items-center justify-center">
 				<p className="text-lg font-bold">🛑</p>
 			</label>
-			<Handle className="w-2 h-2" type="target" position="top" />
+			<CustomHandle className="w-2 h-2" type="target" position="top"  isConnectable={1} />
 		</div>
 	);
 }
