@@ -48,6 +48,21 @@ const useStore = create((set, get) => ({
 
     set({ edges: [edge, ...get().edges] });
   },
+
+	createNode(type) {
+    const id = nanoid();
+
+    switch (type) {
+      case 'openAI': {
+        const data = { apiKey: '' };
+        const position = { x: 0, y: 0 };
+
+        set({ nodes: [...get().nodes, { id, type, data, position }] });
+
+        break;
+      }
+    }
+  },
 }));
 
 export default useStore;
