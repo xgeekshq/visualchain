@@ -48,7 +48,7 @@ const useStore = create((set, get) => {
 
         if (['openAITranscription',"openAIImages","openAICompletion"].includes(nodeToRemove.type)) {
           set({
-            nodes: applyNodeChanges(changes, get().nodes.filter((val) => val.type !== "display"  && val.type !== "codeBlock")),
+            nodes: applyNodeChanges(changes, get().nodes.filter((val) => val.type !== "display"  && val.type !== "codeBlock" && val.type !== "explanation")),
           });
 
           return
