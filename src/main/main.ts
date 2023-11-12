@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { execSync } from 'node:child_process';
 
 class AppUpdater {
   constructor() {
@@ -29,6 +30,24 @@ ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('execBananas', async (_, args) => {
+  // console.log('running cli', _, args)
+  console.log(args.code, args.language);
+  let result;
+  if (args.code) {
+    if (args.language === "js") {
+      result = execSync(
+        `node -e "${args.code}"`,
+      ).toString();
+    } else {
+      result = execSync(
+      `python3 -c "${args.code}"`
+      ).toString();
+    }
+  }
+  return result;
 });
 
 if (process.env.NODE_ENV === 'production') {

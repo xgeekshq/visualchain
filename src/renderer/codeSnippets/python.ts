@@ -2,7 +2,7 @@ export function initPYOpenAI({ apiKey }: { apiKey: string }) {
 	return `
 from openai import OpenAI
   
-client = OpenAI(api_key="${apiKey}")
+client = OpenAI(api_key='${apiKey}')
 `;
 }
 
@@ -17,8 +17,8 @@ export function openAIPYCompletion({
 }) {
 	return `
 chat_completion = client.chat.completions.create(
-  messages=[{"role": "user", "content": "${prompt}"}],
-  model="${model}",
+  messages=[{'role': 'user', 'content': '${prompt}'}],
+  model='${model}',
   temperature=${temperature}
 )
 
@@ -41,10 +41,10 @@ export function openAIPYImageCompletion({
 }) {
 	return `
 chat_completion = client.images.generate(
-	model="${model}",
-	prompt="${prompt}",
+	model='${model}',
+	prompt='${prompt}',
 	n=${numImages},
-	size="${width}x${height}"
+	size='${width}x${height}'
 )
 
 print(chat_completion.data[0].url)
@@ -53,9 +53,9 @@ print(chat_completion.data[0].url)
 
 export function openAIPYTranscription({filePath, model}: {filePath: string; model: string}) {
     return `
-audio_file = open("${filePath}", "rb")
+audio_file = open('${filePath}', 'rb')
 transcript = client.audio.transcriptions.create(
-  model="${model}", 
+  model='${model}', 
   file=audio_file
 )
 

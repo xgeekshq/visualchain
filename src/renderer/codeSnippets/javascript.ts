@@ -1,10 +1,10 @@
 export function initJSOpenAI({ apiKey }: { apiKey: string }) {
 	return `
-import OpenAI from "openai";
-import fs from "fs";
+const OpenAI = require('openai');
+const fs = require('fs');
 
 const client = new OpenAI({
-    apiKey: ${apiKey}
+    apiKey: '${apiKey}'
 });`;
 }
 
@@ -18,13 +18,17 @@ export function openAIJSCompletion({
 	prompt: string;
 }) {
 	return `
-const chatCompletion = await client.chat.completions.create({
-    messages: [{ role: "user", content: "${prompt}" }],
-    model: "${model}",
-    temperature: ${temperature}
-});
+async function main() {
+	const chatCompletion = await client.chat.completions.create({
+		messages: [{ role: 'user', content: '${prompt}' }],
+		model: '${model}',
+		temperature: ${temperature}
+	});
+	
+	console.log(chatCompletion.choices[0].message.content)
+}
 
-console.log(chatCompletion.choices[0].message.content)
+main();
 `;
 }
 
@@ -42,24 +46,30 @@ export function openAIJSImageCompletion({
 	width: number;
 }) {
 	return `
+async function main() {	
 const image = await client.images.generate({
-    model: "${model}",
-    prompt: "${prompt}",
+    model: '${model}',
+    prompt: '${prompt}',
     n: ${numImages},
-    size:"${width}x${height}"
+    size:'${width}x${height}'
 })
     
 console.log(image.data[0].url)
+}
+main();
 `;
 }
 
 export function openAIJSTranscription({filePath, model}: {filePath: string; model: string}) {
     return `
+async function main() {	
 const transcription = await client.audio.transcriptions.create({
-    file: fs.createReadStream("${filePath}"),
-    model: "${model}",
+    file: fs.createReadStream('${filePath}'),
+    model: '${model}',
 });
     
 console.log(transcription.text);
+}
+main();
 `
 }

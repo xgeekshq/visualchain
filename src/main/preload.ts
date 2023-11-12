@@ -22,6 +22,8 @@ const electronHandler = {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
+  execBananas: async ({ code, language }) =>
+    ipcRenderer.invoke('execBananas', { code, language }),
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
