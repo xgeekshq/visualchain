@@ -19,7 +19,7 @@ const useStore = create((set, get) => {
         selectable: false,
         position: { x: 200, y: 50 },
       },
-      { id: nanoid(), type: 'end', position: { x: 50, y: 700 } },
+      { id: nanoid(), type: 'end', position: { x: 50, y: 900 } },
     ],
     edges: [],
     data: {},
