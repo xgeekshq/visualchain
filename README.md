@@ -99,7 +99,11 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 ## Contact
 
-DevDuckies Team
+### DevDuckies Team
+
+- Guido Pereira
+- Nuno Caseiro
+- Roman Sharapov
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
