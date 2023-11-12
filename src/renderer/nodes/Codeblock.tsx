@@ -1,8 +1,8 @@
 import { CopyBlock, dracula } from 'react-code-blocks';
-import useStore from '../store';
 import { saveAs } from 'file-saver';
 import { shallow } from 'zustand/shallow';
 import OpenAI from 'openai';
+import useStore from '../store';
 
 function download(myCode, language) {
   const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
@@ -10,7 +10,7 @@ function download(myCode, language) {
 }
 
 const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+  apiKey: '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',
   dangerouslyAllowBrowser: true,
 });
 
@@ -23,7 +23,13 @@ async function explain(prompt, updateExplanation) {
         content:
           'You are a helpful code assistant. With many experience in software development, I will give you the code and you will explain it shortly.',
       },
-      { role: 'user', content: prompt.replace(import.meta.env.VITE_OPENAI_API_KEY, '') },
+      {
+        role: 'user',
+        content: prompt.replace(
+          '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',
+          '',
+        ),
+      },
     ],
     stream: true,
   });
@@ -52,19 +58,20 @@ export default function CodeBlock({ data }) {
 
   return (
     <div className="rounded-md bg-white shadow-xl border-1">
-      <p className={'rounded-t-md px-2 py-1 bg-gray-500 text-white text-sm'}>
+      <p className="rounded-t-md px-2 py-1 bg-gray-500 text-white text-sm">
         Generated Code
       </p>
       <CopyBlock
         text={data.code}
         language={data.language ?? 'py'}
-        showLineNumbers={true}
+        showLineNumbers
         theme={dracula}
       />
       <div className="flex gap-4 py-2 justify-center">
         <button
           className="border bg-white rounded-md shadow-sm p-2"
-          onClick={() => download(store.data, store.language)}>
+          onClick={() => download(store.data, store.language)}
+        >
           Download
         </button>
         <button className="border bg-white rounded-md shadow-sm p-2">
@@ -72,7 +79,8 @@ export default function CodeBlock({ data }) {
         </button>
         <button
           className="border bg-white rounded-md shadow-sm p-2"
-          onClick={createExplanationNode}>
+          onClick={createExplanationNode}
+        >
           Explain
         </button>
       </div>

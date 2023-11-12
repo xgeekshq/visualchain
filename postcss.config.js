@@ -1,6 +1,4 @@
-export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
+/* eslint-disable global-require */
+module.exports = {
+  plugins: [require('tailwindcss'), require('autoprefixer')],
+};
