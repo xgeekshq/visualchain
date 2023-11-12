@@ -30,6 +30,7 @@ import {
   FiMusic,
   FiSettings,
 } from 'react-icons/fi';
+import Display from './nodes/Display';
 
 const nodeTypes = {
   openAI: OpenAI,
@@ -41,6 +42,7 @@ const nodeTypes = {
   codeBlock: CodeBlock,
   explanation: Explanation,
   codeLanguage: CodeTypeSelector,
+  display: Display
 };
 
 const selector = (store) => ({
@@ -58,6 +60,7 @@ const selector = (store) => ({
   addNode: store.addNode,
   updateData: store.updateData,
   updateLanguage: store.updateLanguage,
+  updateCompletionType: store.updateCompletionType
 });
 
 export default function App() {
@@ -115,9 +118,17 @@ export default function App() {
       return true;
     }
 
-    if (sourceNode.type === 'codeLanguage' && targetNode.type === 'end') {
-      return true;
+    if (sourceNode.type === "codeLanguage" && targetNode.type === "end") {
+      return true
     }
+
+    // if (sourceNode.type === "codeLanguage" && targetNode.type === "display") {
+    //   return true
+    // }
+
+    // if (sourceNode.type === 'display' && targetNode.type === 'end') {
+    //   return true;
+    // }
 
     return false;
   };
@@ -166,7 +177,9 @@ export default function App() {
 		let myCode = "";
 
 		for (const x in myJson) {
-			if (x === "start" || x === "end" || x === "codeLanguage") continue;
+			if (x === "start" || x === "end" || x === "codeLanguage" || x === "display") continue;
+
+      store.updateCompletionType(x)
 
 			const { fn, ...args } = myJson[x];
 			if (fn) {

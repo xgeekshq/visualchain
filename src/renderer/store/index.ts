@@ -17,6 +17,8 @@ const useStore = create((set, get) => {
     edges: [],
     data: {},
     explanation: '',
+    outputString: '',
+    completionType: '',
     language: 'py',
 
     getNode(id: string) {
@@ -37,11 +39,20 @@ const useStore = create((set, get) => {
 
     onNodesChange(changes) {
       const removeNode = changes.find((c) => c.type === 'remove');
+
       if (removeNode) {
         const nodeToRemove = get().nodes.find((n) => n.id === removeNode.id);
 
         if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end')
           return;
+
+        if (['openAITranscription',"openAIImages","openAICompletion"].includes(nodeToRemove.type)) {
+          set({
+            nodes: applyNodeChanges(changes, get().nodes.filter((val) => val.type !== "display"  && val.type !== "codeBlock")),
+          });
+
+          return
+        }
       }
 
       set({
@@ -121,6 +132,12 @@ const useStore = create((set, get) => {
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }
+        case 'display': {
+          const data = { code: get().data };
+          const position = { x: 100, y: 100 };
+          set({ nodes: [...get().nodes, { id, type, data, position }] });
+          break;
+        }
         case 'codeLanguage': {
           const data = { language: 'js' };
           set({ nodes: [...get().nodes, { id, type, data, position }] });
@@ -143,6 +160,12 @@ const useStore = create((set, get) => {
     },
     updateLanguage(newLanguage) {
       set({ language: newLanguage });
+    },
+    updateOutputString(outputString) {
+      set({ outputString });
+    },
+    updateCompletionType(type) {
+      set({ completionType: type });
     },
   };
 });

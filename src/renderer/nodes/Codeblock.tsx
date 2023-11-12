@@ -45,6 +45,7 @@ const selector = (store) => ({
   data: store.data,
   language: store.language,
   updateExplanation: store.updateExplanation,
+  updateOutputString: store.updateOutputString,
   explanation: store.explanation,
   createNode: store.createNode,
 });
@@ -76,7 +77,8 @@ export default function CodeBlock({ data }) {
         </button>
         <button className="border bg-white rounded-md shadow-sm p-2" onClick={async () => {
           const result = await window.electron.execBananas({code: store.data, language: store.language})
-          console.log(result)
+          store.updateOutputString(result)
+          store.createNode('display');
         }}>
           Execute
         </button>
