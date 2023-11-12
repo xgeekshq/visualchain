@@ -12,6 +12,13 @@ const useStore = create((set, get) => {
   return {
     nodes: [
       { id: nanoid(), type: 'start', position: { x: 50, y: 50 } },
+      {
+        id: nanoid(),
+        type: 'tutorial',
+        draggable: false,
+        selectable: false,
+        position: { x: 200, y: 50 },
+      },
       { id: nanoid(), type: 'end', position: { x: 50, y: 700 } },
     ],
     edges: [],
@@ -112,14 +119,14 @@ const useStore = create((set, get) => {
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }
-        case 'start': {
-          set({ nodes: [...get().nodes, { id, type, position }] });
-          break;
-        }
-        case 'end': {
-          set({ nodes: [...get().nodes, { id, type, position }] });
-          break;
-        }
+        // case 'start': {
+        //   set({ nodes: [...get().nodes, { id, type, position }] });
+        //   break;
+        // }
+        // case 'end': {
+        //   set({ nodes: [...get().nodes, { id, type, position }] });
+        //   break;
+        // }
         case 'codeBlock': {
           const data = { code: get().data };
           const position = { x: 200, y: 300 };

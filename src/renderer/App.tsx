@@ -6,6 +6,15 @@ import ReactFlow, {
   ReactFlowProvider,
 } from 'reactflow';
 import { shallow } from 'zustand/shallow';
+import { useCallback, useRef, useState } from 'react';
+import {
+  FiPlayCircle,
+  FiKey,
+  FiMessageSquare,
+  FiImage,
+  FiMusic,
+  FiSettings,
+} from 'react-icons/fi';
 import useStore from './store';
 
 import 'reactflow/dist/style.css';
@@ -19,18 +28,10 @@ import CodeBlock from './nodes/Codeblock';
 import Start from './nodes/Start';
 import Explanation from './nodes/Explanation';
 import CodeTypeSelector from './nodes/CodeTypeSelector';
-import { useCallback, useRef, useState } from 'react';
 import OpenAITranscription from './nodes/OpenAITranscription';
 
-import {
-  FiPlayCircle,
-  FiKey,
-  FiMessageSquare,
-  FiImage,
-  FiMusic,
-  FiSettings,
-} from 'react-icons/fi';
 import Display from './nodes/Display';
+import Tutorial from './nodes/Tutorial';
 
 const nodeTypes = {
   openAI: OpenAI,
@@ -42,7 +43,8 @@ const nodeTypes = {
   codeBlock: CodeBlock,
   explanation: Explanation,
   codeLanguage: CodeTypeSelector,
-  display: Display
+  display: Display,
+  tutorial: Tutorial,
 };
 
 const selector = (store) => ({
@@ -60,7 +62,7 @@ const selector = (store) => ({
   addNode: store.addNode,
   updateData: store.updateData,
   updateLanguage: store.updateLanguage,
-  updateCompletionType: store.updateCompletionType
+  updateCompletionType: store.updateCompletionType,
 });
 
 export default function App() {
@@ -82,7 +84,7 @@ export default function App() {
       }
 
       const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
+        x: event.clientX - 210,
         y: event.clientY,
       });
 
@@ -94,11 +96,11 @@ export default function App() {
   const isValidConnection = (connection) => {
     const sourceNode = store.nodes.find((val) => val.id === connection.source);
 
-		const targetNode = store.nodes.find((val) => val.id === connection.target);
+    const targetNode = store.nodes.find((val) => val.id === connection.target);
 
-		if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
-			return true;
-		}
+    if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
+      return true;
+    }
 
     if (
       sourceNode.type === 'openAI' &&
@@ -118,8 +120,8 @@ export default function App() {
       return true;
     }
 
-    if (sourceNode.type === "codeLanguage" && targetNode.type === "end") {
-      return true
+    if (sourceNode.type === 'codeLanguage' && targetNode.type === 'end') {
+      return true;
     }
 
     // if (sourceNode.type === "codeLanguage" && targetNode.type === "display") {
@@ -167,24 +169,30 @@ export default function App() {
 
     if (allPaths.length <= 0) return;
 
-		for (const nodes of allPaths) {
-			for (let i = 0; i < nodes.length; i++) {
-				const node = store.getNode(nodes[i]);
-				myJson[node.type] = node.data;
-			}
-		}
+    for (const nodes of allPaths) {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = store.getNode(nodes[i]);
+        myJson[node.type] = node.data;
+      }
+    }
 
-		let myCode = "";
+    let myCode = '';
 
-		for (const x in myJson) {
-			if (x === "start" || x === "end" || x === "codeLanguage" || x === "display") continue;
+    for (const x in myJson) {
+      if (
+        x === 'start' ||
+        x === 'end' ||
+        x === 'codeLanguage' ||
+        x === 'display'
+      )
+        continue;
 
-      store.updateCompletionType(x)
+      store.updateCompletionType(x);
 
-			const { fn, ...args } = myJson[x];
-			if (fn) {
-				myCode += fn({ ...args, language: store.language });
-				myCode += `
+      const { fn, ...args } = myJson[x];
+      if (fn) {
+        myCode += fn({ ...args, language: store.language });
+        myCode += `
 `;
       }
     }
@@ -259,7 +267,8 @@ export default function App() {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            fitView>
+            fitView
+          >
             <Controls />
             <MiniMap />
             <Background variant="dots" gap={12} size={1} />
