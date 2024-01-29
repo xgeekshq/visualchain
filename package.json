@@ -1,35 +1,36 @@
 {
-  "description": "A foundation for scalable desktop apps",
+  "description": "Create AI applications with a visual editor",
   "keywords": [
-    "electron",
-    "boilerplate",
+    "openai",
     "react",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "tailwind",
+    "reactflow",
+    "electron",
+    "typescript"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/xgeeks-geekathon/visualchain#readme",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/xgeeks-geekathon/visualchain/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/xgeeks-geekathon/visualchain.git"
   },
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Guido Santos Pereira",
+    "email": "g.pereira@kigroup.de",
+    "url": "https://github.com/StereoPT"
   },
   "contributors": [
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
+      "name": "Nuno Caseiro",
+      "email": "n.caseiro@kigroup.de",
+      "url": "https://github.com/nunocaseiro"
+    },
+    {
+      "name": "Roman Sharapov",
+      "url": "https://github.com/romansharapov19"
     }
   ],
   "main": "./src/main/main.ts",
@@ -66,7 +67,6 @@
   "jest": {
     "moduleDirectories": [
       "node_modules",
-      "release/app/node_modules",
       "src"
     ],
     "moduleFileExtensions": [
@@ -88,7 +88,6 @@
       "url": "http://localhost/"
     },
     "testPathIgnorePatterns": [
-      "release/app/dist",
       ".erb/dll"
     ],
     "transform": {
@@ -182,73 +181,6 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.9.0"
-  },
-  "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
-    "asar": true,
-    "asarUnpack": "**\\*.{node,dll}",
-    "files": [
-      "dist",
-      "node_modules",
-      "package.json"
-    ],
-    "afterSign": ".erb/scripts/notarize.js",
-    "mac": {
-      "target": {
-        "target": "default",
-        "arch": [
-          "arm64",
-          "x64"
-        ]
-      },
-      "type": "distribution",
-      "hardenedRuntime": true,
-      "entitlements": "assets/entitlements.mac.plist",
-      "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
-    },
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "category": "Development"
-    },
-    "directories": {
-      "app": "release/app",
-      "buildResources": "assets",
-      "output": "release/build"
-    },
-    "extraResources": [
-      "./assets/**"
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "devEngines": {
     "node": ">=14.x",
