@@ -1,5 +1,5 @@
 export function initJSOpenAI({ apiKey }: { apiKey: string }) {
-	return `
+  return `
 const OpenAI = require('openai');
 const fs = require('fs');
 
@@ -9,15 +9,15 @@ const client = new OpenAI({
 }
 
 export function openAIJSCompletion({
-	model,
-	temperature,
-	prompt,
+  model,
+  temperature,
+  prompt,
 }: {
-	model: string;
-	temperature: number;
-	prompt: string;
+  model: string;
+  temperature: number;
+  prompt: string;
 }) {
-	return `
+  return `
 async function main() {
 	const chatCompletion = await client.chat.completions.create({
 		messages: [{ role: 'user', content: '${prompt}' }],
@@ -33,19 +33,19 @@ main();
 }
 
 export function openAIJSImageCompletion({
-	model,
-	numImages,
-	prompt,
-	height,
-	width
+  model,
+  numImages,
+  prompt,
+  height,
+  width,
 }: {
-	model: string;
-	numImages: number;
-	prompt: string;
-	height: number;
-	width: number;
+  model: string;
+  numImages: number;
+  prompt: string;
+  height: number;
+  width: number;
 }) {
-	return `
+  return `
 async function main() {	
 const image = await client.images.generate({
     model: '${model}',
@@ -60,8 +60,14 @@ main();
 `;
 }
 
-export function openAIJSTranscription({filePath, model}: {filePath: string; model: string}) {
-    return `
+export function openAIJSTranscription({
+  filePath,
+  model,
+}: {
+  filePath: string;
+  model: string;
+}) {
+  return `
 async function main() {	
 const transcription = await client.audio.transcriptions.create({
     file: fs.createReadStream('${filePath}'),
@@ -71,5 +77,5 @@ const transcription = await client.audio.transcriptions.create({
 console.log(transcription.text);
 }
 main();
-`
+`;
 }

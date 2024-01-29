@@ -53,12 +53,24 @@ const useStore = create((set, get) => {
         if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end')
           return;
 
-        if (['openAITranscription',"openAIImages","openAICompletion"].includes(nodeToRemove.type)) {
+        if (
+          ['openAITranscription', 'openAIImages', 'openAICompletion'].includes(
+            nodeToRemove.type,
+          )
+        ) {
           set({
-            nodes: applyNodeChanges(changes, get().nodes.filter((val) => val.type !== "display"  && val.type !== "codeBlock" && val.type !== "explanation")),
+            nodes: applyNodeChanges(
+              changes,
+              get().nodes.filter(
+                (val) =>
+                  val.type !== 'display' &&
+                  val.type !== 'codeBlock' &&
+                  val.type !== 'explanation',
+              ),
+            ),
           });
 
-          return
+          return;
         }
       }
 
@@ -110,7 +122,7 @@ const useStore = create((set, get) => {
         case 'openAIImages': {
           const data = {
             prompt: '',
-            model: "dall-e-2",
+            model: 'dall-e-2',
             numImages: 1,
             height: 1024,
             width: 1024,
@@ -151,7 +163,11 @@ const useStore = create((set, get) => {
           break;
         }
         case 'openAITranscription': {
-          const data = { filePath: '', model: "whisper-1", fn: openAITranscription };
+          const data = {
+            filePath: '',
+            model: 'whisper-1',
+            fn: openAITranscription,
+          };
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }

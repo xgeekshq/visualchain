@@ -9,12 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import { execSync } from 'node:child_process';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { execSync } from 'node:child_process';
 
 class AppUpdater {
   constructor() {
@@ -26,25 +26,15 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
-
 ipcMain.handle('execBananas', async (_, args) => {
   // console.log('running cli', _, args)
   console.log(args.code, args.language);
   let result;
   if (args.code) {
-    if (args.language === "js") {
-      result = execSync(
-        `node -e "${args.code}"`,
-      ).toString();
+    if (args.language === 'js') {
+      result = execSync(`node -e "${args.code}"`).toString();
     } else {
-      result = execSync(
-      `python3 -c "${args.code}"`
-      ).toString();
+      result = execSync(`python3 -c "${args.code}"`).toString();
     }
   }
   return result;
@@ -65,7 +55,8 @@ if (isDebug) {
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  // const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = [];
 
   return installer
     .default(

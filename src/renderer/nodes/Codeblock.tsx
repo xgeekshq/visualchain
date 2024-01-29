@@ -75,11 +75,17 @@ export default function CodeBlock({ data }) {
         >
           Download
         </button>
-        <button className="border bg-white rounded-md shadow-sm p-2" onClick={async () => {
-          const result = await window.electron.execBananas({code: store.data, language: store.language})
-          store.updateOutputString(result)
-          store.createNode('display');
-        }}>
+        <button
+          className="border bg-white rounded-md shadow-sm p-2"
+          onClick={async () => {
+            const result = await window.electron.execBananas({
+              code: store.data,
+              language: store.language,
+            });
+            store.updateOutputString(result);
+            store.createNode('display');
+          }}
+        >
           Execute
         </button>
         <button

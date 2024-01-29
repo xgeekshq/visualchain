@@ -8,13 +8,13 @@
     "electron",
     "typescript"
   ],
-  "homepage": "https://github.com/xgeeks-geekathon/visualchain#readme",
+  "homepage": "https://github.com/xgeekshq/visualchain#readme",
   "bugs": {
-    "url": "https://github.com/xgeeks-geekathon/visualchain/issues"
+    "url": "https://github.com/xgeekshq/visualchain/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xgeeks-geekathon/visualchain.git"
+    "url": "git+https://github.com/xgeekshq/visualchain.git"
   },
   "license": "MIT",
   "author": {
@@ -67,6 +67,7 @@
   "jest": {
     "moduleDirectories": [
       "node_modules",
+      "release/app/node_modules",
       "src"
     ],
     "moduleFileExtensions": [
@@ -88,6 +89,7 @@
       "url": "http://localhost/"
     },
     "testPathIgnorePatterns": [
+      "release/app/dist",
       ".erb/dll"
     ],
     "transform": {
