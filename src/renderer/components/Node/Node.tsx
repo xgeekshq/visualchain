@@ -3,7 +3,7 @@ import cn from '../../utils/cn';
 import { NodeSize, TitleBackground } from '../../types/styles';
 
 type NodeType = {
-  title: string;
+  title?: string;
   size?: NodeSize;
   titleBG?: TitleBackground;
   children: React.ReactNode;
@@ -25,9 +25,11 @@ const Node = ({
 
   return (
     <div className={cn('rounded-md bg-white shadow-xl border', nodeSize)}>
-      <p className={cn('rounded-t-md px-2 py-1 text-white text-sm', titleBG)}>
-        {title}
-      </p>
+      {title && (
+        <p className={cn('rounded-t-md px-2 py-1 text-white text-sm', titleBG)}>
+          {title}
+        </p>
+      )}
       <div className="p-2">{children}</div>
     </div>
   );
