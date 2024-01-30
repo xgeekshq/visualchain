@@ -7,7 +7,7 @@ export default {
   plugins: [],
   safelist: [
     {
-      pattern: /bg-(green|blue|yellow)-500/,
+      pattern: /bg-(green|blue|yellow|red)-500/,
     },
   ],
 };
