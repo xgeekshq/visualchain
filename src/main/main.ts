@@ -16,6 +16,8 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
+require('dotenv').config();
+
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';

@@ -11,7 +11,7 @@ function download(myCode, language) {
 }
 
 const openai = new OpenAI({
-  apiKey: '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',
+  apiKey: window.envVars.openAiKey,
   dangerouslyAllowBrowser: true,
 });
 
@@ -26,10 +26,7 @@ async function explain(prompt, updateExplanation) {
       },
       {
         role: 'user',
-        content: prompt.replace(
-          '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',
-          '',
-        ),
+        content: prompt.replace(window.envVars.openAiKey, ''),
       },
     ],
     stream: true,

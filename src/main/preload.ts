@@ -8,5 +8,8 @@ const electronHandler = {
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
+contextBridge.exposeInMainWorld('envVars', {
+  openAiKey: process.env.OPENAI_KEY,
+});
 
 export type ElectronHandler = typeof electronHandler;
