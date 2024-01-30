@@ -9,9 +9,8 @@ function download(myCode, language) {
   const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
   saveAs(file, `askAI.${language}`);
 }
-
 const openai = new OpenAI({
-  apiKey: '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',
+  apiKey: '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',
   dangerouslyAllowBrowser: true,
 });
 
@@ -27,7 +26,7 @@ async function explain(prompt, updateExplanation) {
       {
         role: 'user',
         content: prompt.replace(
-          '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',
+          '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',
           '',
         ),
       },
@@ -74,7 +73,7 @@ export default function CodeBlock({ data }) {
   };
 
   return (
-    <Node title="Generated Code" titleBG="bg-gray-500" size="lg">
+    <Node title="Generated Code" titleBG="bg-gray-500" size="xl">
       <div className="flex flex-col gap-2">
         <CopyBlock
           text={data.code}

@@ -19,34 +19,11 @@ import {
 import useStore from './store';
 
 import 'reactflow/dist/style.css';
+import nodes from './nodes';
 import Navbar from './components/Navbar/Navbar';
 import NavbarItem from './components/Navbar/NavbarItem';
-import OpenAI from './nodes/OpenAI';
-import OpenAICompletion from './nodes/OpenAICompletion';
-import OpenAIImages from './nodes/OpenAIImage';
-import End from './nodes/End';
-import CodeBlock from './nodes/Codeblock';
-import Start from './nodes/Start';
-import Explanation from './nodes/Explanation';
-import CodeTypeSelector from './nodes/CodeTypeSelector';
-import OpenAITranscription from './nodes/OpenAITranscription';
-
-import Display from './nodes/Display';
-import Tutorial from './nodes/Tutorial';
-
-const nodeTypes = {
-  openAI: OpenAI,
-  openAICompletion: OpenAICompletion,
-  openAIImages: OpenAIImages,
-  openAITranscription: OpenAITranscription,
-  end: End,
-  start: Start,
-  codeBlock: CodeBlock,
-  explanation: Explanation,
-  codeLanguage: CodeTypeSelector,
-  display: Display,
-  tutorial: Tutorial,
-};
+import getAllFlows from './utils/getAllFlows';
+import isValidConnection from './utils/isValidConnection';
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -94,79 +71,13 @@ export default function App() {
     [reactFlowInstance],
   );
 
-  const isValidConnection = (connection) => {
-    const sourceNode = store.nodes.find((val) => val.id === connection.source);
-
-    const targetNode = store.nodes.find((val) => val.id === connection.target);
-
-    if (sourceNode.type === 'start' && targetNode.type === 'openAI') {
-      return true;
-    }
-
-    if (
-      sourceNode.type === 'openAI' &&
-      (targetNode.type === 'openAICompletion' ||
-        targetNode.type === 'openAIImages' ||
-        targetNode.type === 'openAITranscription')
-    ) {
-      return true;
-    }
-
-    if (
-      (sourceNode.type === 'openAICompletion' ||
-        sourceNode.type === 'openAIImages' ||
-        sourceNode.type === 'openAITranscription') &&
-      targetNode.type === 'codeLanguage'
-    ) {
-      return true;
-    }
-
-    if (sourceNode.type === 'codeLanguage' && targetNode.type === 'end') {
-      return true;
-    }
-
-    // if (sourceNode.type === "codeLanguage" && targetNode.type === "display") {
-    //   return true
-    // }
-
-    // if (sourceNode.type === 'display' && targetNode.type === 'end') {
-    //   return true;
-    // }
-
-    return false;
-  };
-
-  function getAllFlows(startNodeId, currentPath = [], allPaths = []) {
-    const currentNode = store.nodes.find((node) => node.id === startNodeId);
-
-    // If the current node is a "stop" type, add the current path to the list of all paths
-    if (currentNode.type === 'end') {
-      allPaths.push([...currentPath, currentNode.id]);
-      return;
-    }
-
-    // Iterate through outgoing edges from the current node
-    const outgoingEdges = store.edges.filter(
-      (edge) => edge.source === startNodeId,
-    );
-    for (const edge of outgoingEdges) {
-      const nextNodeId = edge.target;
-
-      // Avoid cycles by checking if the next node is already in the current path
-      if (!currentPath.includes(nextNodeId)) {
-        // Recursively explore the next node
-        getAllFlows(nextNodeId, [...currentPath, currentNode.id], allPaths);
-      }
-    }
-  }
-
   const handleRun = () => {
     const myJson = {};
     const startNode = store.nodes.find((val) => val.type === 'start');
     if (!startNode) return;
 
     const allPaths = [];
-    getAllFlows(startNode.id, [], allPaths);
+    getAllFlows(store, startNode.id, [], allPaths);
 
     if (allPaths.length <= 0) return;
 
@@ -180,13 +91,7 @@ export default function App() {
     let myCode = '';
 
     for (const x in myJson) {
-      if (
-        x === 'start' ||
-        x === 'end' ||
-        x === 'codeLanguage' ||
-        x === 'display'
-      )
-        continue;
+      if (['start', 'end', 'codeLanguage', 'display'].includes(x)) continue;
 
       store.updateCompletionType(x);
 
@@ -259,11 +164,13 @@ export default function App() {
           <ReactFlow
             nodes={store.nodes}
             edges={store.edges}
-            nodeTypes={nodeTypes}
+            nodeTypes={nodes}
             onNodesChange={store.onNodesChange}
             onEdgesChange={store.onEdgesChange}
             onConnect={store.addEdge}
-            isValidConnection={isValidConnection}
+            isValidConnection={(connection) =>
+              isValidConnection(store, connection)
+            }
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}

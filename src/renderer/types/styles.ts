@@ -1,4 +1,4 @@
-export type NodeSize = 'sm' | 'md' | 'lg';
+export type NodeSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export type TitleBackground =
   | 'bg-green-500'
