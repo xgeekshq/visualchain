@@ -8,8 +8,28 @@ import {
   openAITranscription,
 } from '../codeSnippets/general';
 
-const useStore = create((set, get) => {
+interface VisualchainState {}
+
+const useStore = create<VisualchainState>((set, get) => {
+  const getNode = (id: string) => {
+    return get().nodes.find((node) => node.id === id);
+  };
+
+  const addNode = (data: object, type: string) => {
+    const id = nanoid();
+    const newNode = {
+      id,
+      position: { x: 0, y: 0 },
+      data,
+      type,
+    };
+
+    set({ nodes: [...get().nodes, newNode] });
+  };
+
   return {
+    getNode,
+    addNode,
     nodes: [
       { id: nanoid(), type: 'start', position: { x: 50, y: 50 } },
       {
@@ -27,28 +47,11 @@ const useStore = create((set, get) => {
     outputString: '',
     completionType: '',
     language: 'py',
-
-    getNode(id: string) {
-      return get().nodes.find((node) => node.id === id);
-    },
-
-    addNode(data: object, type: string) {
-      const id = nanoid();
-
-      const newNode = {
-        id,
-        position: { x: 0, y: 0 },
-        data,
-        type,
-      };
-      set({ nodes: [...get().nodes, newNode] });
-    },
-
     onNodesChange(changes) {
       const removeNode = changes.find((c) => c.type === 'remove');
 
       if (removeNode) {
-        const nodeToRemove = get().nodes.find((n) => n.id === removeNode.id);
+        const nodeToRemove = getNode(removeNode.id);
 
         if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end')
           return;
@@ -131,14 +134,6 @@ const useStore = create((set, get) => {
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }
-        // case 'start': {
-        //   set({ nodes: [...get().nodes, { id, type, position }] });
-        //   break;
-        // }
-        // case 'end': {
-        //   set({ nodes: [...get().nodes, { id, type, position }] });
-        //   break;
-        // }
         case 'codeBlock': {
           const data = { code: get().data };
           const position = { x: 200, y: 300 };
@@ -173,11 +168,9 @@ const useStore = create((set, get) => {
         }
       }
     },
-
     updateData(newData) {
       set({ data: newData });
     },
-
     updateExplanation(newExplanation) {
       set({ explanation: get().explanation.concat(newExplanation) });
     },

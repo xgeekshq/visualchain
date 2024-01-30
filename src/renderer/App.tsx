@@ -1,13 +1,18 @@
+import { DragEvent, useCallback, useRef, useState } from 'react';
+
 import './index.css';
+import 'reactflow/dist/style.css';
+
 import ReactFlow, {
   Background,
   BackgroundVariant,
   Controls,
   MiniMap,
+  ReactFlowInstance,
   ReactFlowProvider,
 } from 'reactflow';
+
 import { shallow } from 'zustand/shallow';
-import { useCallback, useRef, useState } from 'react';
 import {
   FiPlayCircle,
   FiKey,
@@ -16,12 +21,13 @@ import {
   FiMusic,
   FiSettings,
 } from 'react-icons/fi';
-import useStore from './store';
 
-import 'reactflow/dist/style.css';
+import useStore from './store';
 import nodes from './nodes';
+
 import Navbar from './components/Navbar/Navbar';
 import NavbarItem from './components/Navbar/NavbarItem';
+
 import getAllFlows from './utils/getAllFlows';
 import isValidConnection from './utils/isValidConnection';
 
@@ -46,20 +52,28 @@ const selector = (store) => ({
 export default function App() {
   const reactFlowWrapper = useRef(null);
   const store = useStore(selector, shallow);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const onDragOver = useCallback((event) => {
+  const [reactFlowInstance, setReactFlowInstance] =
+    useState<ReactFlowInstance>();
+
+  const onDragOver = useCallback((event: DragEvent) => {
     event.preventDefault();
+    if (!event.dataTransfer) return;
+
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
   const onDrop = useCallback(
-    (event) => {
+    (event: DragEvent) => {
       event.preventDefault();
+      if (!event.dataTransfer) return;
+
       const type = event.dataTransfer.getData('application/reactflow');
       if (typeof type === 'undefined' || !type) {
         return;
       }
+
+      if (reactFlowInstance == null) return;
 
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX - 210,
