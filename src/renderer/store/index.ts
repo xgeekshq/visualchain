@@ -1,4 +1,4 @@
-import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
+import { applyNodeChanges, applyEdgeChanges, Node, Edge } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import {
@@ -8,7 +8,10 @@ import {
   openAITranscription,
 } from '../codeSnippets/general';
 
-interface VisualchainState {}
+interface VisualchainState {
+  nodes: Node[];
+  edges: Edge[];
+}
 
 const useStore = create<VisualchainState>((set, get) => {
   const getNode = (id: string) => {
@@ -27,9 +30,48 @@ const useStore = create<VisualchainState>((set, get) => {
     set({ nodes: [...get().nodes, newNode] });
   };
 
+  const onEdgesChange = (changes) => {
+    set({
+      edges: applyEdgeChanges(changes, get().edges),
+    });
+  };
+
+  const updateNode = (id, data) => {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
+    });
+  };
+
+  const addEdge = (data) => {
+    const id = nanoid(6);
+    const edge = { id, ...data };
+
+    set({ edges: [edge, ...get().edges] });
+  };
+
+  const updateData = (newData) => {
+    set({ data: newData });
+  };
+
+  const updateExplanation = (newExplanation) => {
+    set({ explanation: get().explanation.concat(newExplanation) });
+  };
+
+  const updateLanguage = (newLanguage) => {
+    set({ language: newLanguage });
+  };
+
+  const updateOutputString = (outputString) => {
+    set({ outputString });
+  };
+
+  const updateCompletionType = (type) => {
+    set({ completionType: type });
+  };
+
   return {
-    getNode,
-    addNode,
     nodes: [
       { id: nanoid(), type: 'start', position: { x: 50, y: 50 } },
       {
@@ -42,6 +84,16 @@ const useStore = create<VisualchainState>((set, get) => {
       { id: nanoid(), type: 'end', position: { x: 50, y: 900 } },
     ],
     edges: [],
+    getNode,
+    addNode,
+    onEdgesChange,
+    updateNode,
+    addEdge,
+    updateData,
+    updateExplanation,
+    updateLanguage,
+    updateOutputString,
+    updateCompletionType,
     data: {},
     explanation: '',
     outputString: '',
@@ -49,60 +101,36 @@ const useStore = create<VisualchainState>((set, get) => {
     language: 'py',
     onNodesChange(changes) {
       const removeNode = changes.find((c) => c.type === 'remove');
+      if (!removeNode) return;
 
-      if (removeNode) {
-        const nodeToRemove = getNode(removeNode.id);
+      const nodeToRemove = getNode(removeNode.id);
+      if (!nodeToRemove) return;
+      if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end') return;
 
-        if (nodeToRemove.type === 'start' || nodeToRemove.type === 'end')
-          return;
-
-        if (
-          ['openAITranscription', 'openAIImages', 'openAICompletion'].includes(
-            nodeToRemove.type,
-          )
-        ) {
-          set({
-            nodes: applyNodeChanges(
-              changes,
-              get().nodes.filter(
-                (val) =>
-                  val.type !== 'display' &&
-                  val.type !== 'codeBlock' &&
-                  val.type !== 'explanation',
-              ),
+      if (
+        ['openAITranscription', 'openAIImages', 'openAICompletion'].includes(
+          nodeToRemove.type,
+        )
+      ) {
+        set({
+          nodes: applyNodeChanges(
+            changes,
+            get().nodes.filter(
+              (val) =>
+                val.type !== 'display' &&
+                val.type !== 'codeBlock' &&
+                val.type !== 'explanation',
             ),
-          });
+          ),
+        });
 
-          return;
-        }
+        return;
       }
 
       set({
         nodes: applyNodeChanges(changes, get().nodes),
       });
     },
-
-    onEdgesChange(changes) {
-      set({
-        edges: applyEdgeChanges(changes, get().edges),
-      });
-    },
-
-    updateNode(id, data) {
-      set({
-        nodes: get().nodes.map((node) =>
-          node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
-        ),
-      });
-    },
-
-    addEdge(data) {
-      const id = nanoid(6);
-      const edge = { id, ...data };
-
-      set({ edges: [edge, ...get().edges] });
-    },
-
     createNode(type, position = { x: 0, y: 0 }) {
       const id = nanoid();
 
@@ -166,22 +194,10 @@ const useStore = create<VisualchainState>((set, get) => {
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
         }
+        default: {
+          console.error('Unknown Node Type!');
+        }
       }
-    },
-    updateData(newData) {
-      set({ data: newData });
-    },
-    updateExplanation(newExplanation) {
-      set({ explanation: get().explanation.concat(newExplanation) });
-    },
-    updateLanguage(newLanguage) {
-      set({ language: newLanguage });
-    },
-    updateOutputString(outputString) {
-      set({ outputString });
-    },
-    updateCompletionType(type) {
-      set({ completionType: type });
     },
   };
 });

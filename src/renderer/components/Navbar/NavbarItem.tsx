@@ -15,7 +15,9 @@ const NavbarItem = ({
   onClick,
   draggable = false,
 }: NavbarItemProps) => {
-  const onDragStart = (event, nodeType) => {
+  const onDragStart = (event: DragEvent, nodeType: string) => {
+    if (!event.dataTransfer) return;
+
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
