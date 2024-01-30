@@ -1,4 +1,9 @@
-function getAllFlows(store, startNodeId, currentPath = [], allPaths = []) {
+function getAllFlows(
+  store,
+  startNodeId: string,
+  currentPath = [],
+  allPaths = [],
+) {
   const currentNode = store.nodes.find((node) => node.id === startNodeId);
 
   // If the current node is a "stop" type, add the current path to the list of all paths
