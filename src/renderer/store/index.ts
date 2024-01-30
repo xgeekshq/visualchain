@@ -1,4 +1,4 @@
-import { applyNodeChanges, applyEdgeChanges, Node } from 'reactflow';
+import { applyNodeChanges, applyEdgeChanges, Node, Edge } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import {
@@ -118,7 +118,7 @@ const useStore = create<VisualchainState>((set, get) => {
         case 'openAICompletion': {
           const data = {
             model: 'gpt-3.5-turbo-1106',
-            temperature: 0,
+            temperature: 0.7,
             prompt: '',
             fn: openAICompletion,
           };

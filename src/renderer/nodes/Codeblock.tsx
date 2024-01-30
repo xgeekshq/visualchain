@@ -9,6 +9,7 @@ function download(myCode, language) {
   const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
   saveAs(file, `askAI.${language}`);
 }
+
 const openai = new OpenAI({
   apiKey: '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',
   dangerouslyAllowBrowser: true,
@@ -20,8 +21,8 @@ async function explain(prompt, updateExplanation) {
     messages: [
       {
         role: 'system',
-        content:
-          'You are a helpful code assistant. With many experience in software development, I will give you the code and you will explain it shortly.',
+        content: `You are a helpful code assistant and uou have a lot of experience in software development.
+        I will give you a code block and you will explain it that code in two paragraphs.`,
       },
       {
         role: 'user',
