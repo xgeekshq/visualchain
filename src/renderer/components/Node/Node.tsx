@@ -1,17 +1,18 @@
 import React from 'react';
 import cn from '../../utils/cn';
+import { NodeSize, TitleBackground } from '../../types/styles';
 
 type NodeType = {
   title: string;
-  titleBG?:
-    | 'bg-green-500'
-    | 'bg-blue-500'
-    | 'bg-yellow-500'
-    | 'bg-red-500'
-    | 'bg-gray-500'
-    | 'bg-purple-500';
-  size?: 'md' | 'auto';
+  size?: NodeSize;
+  titleBG?: TitleBackground;
   children: React.ReactNode;
+};
+
+const NODE_SIZE = {
+  sm: 'w-42',
+  md: 'w-96',
+  lg: 'w-[600px]',
 };
 
 const Node = ({
@@ -20,13 +21,10 @@ const Node = ({
   size = 'md',
   children,
 }: NodeType) => {
+  const nodeSize = NODE_SIZE[size];
+
   return (
-    <div
-      className={cn(
-        'rounded-md bg-white shadow-xl border',
-        size === 'md' && 'w-96',
-      )}
-    >
+    <div className={cn('rounded-md bg-white shadow-xl border', nodeSize)}>
       <p className={cn('rounded-t-md px-2 py-1 text-white text-sm', titleBG)}>
         {title}
       </p>
