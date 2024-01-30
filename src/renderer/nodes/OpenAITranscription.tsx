@@ -13,7 +13,7 @@ export default function OpenAITranscription({ id, data }) {
   const { setFilePath } = useStore(selector(id), shallow);
 
   return (
-    <Node title="OpenAI Transcription" titleBG="blue">
+    <Node title="OpenAI Transcription" titleBG="bg-blue-500">
       <CustomHandle
         className="w-2 h-2"
         type="target"

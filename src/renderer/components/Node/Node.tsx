@@ -1,27 +1,33 @@
 import React from 'react';
+import cn from '../../utils/cn';
 
 type NodeType = {
   title: string;
-  titleBG?: 'green' | 'blue' | 'yellow' | 'red' | 'gray' | 'purple';
+  titleBG?:
+    | 'bg-green-500'
+    | 'bg-blue-500'
+    | 'bg-yellow-500'
+    | 'bg-red-500'
+    | 'bg-gray-500'
+    | 'bg-purple-500';
   size?: 'md' | 'auto';
   children: React.ReactNode;
 };
 
 const Node = ({
   title,
-  titleBG = 'green',
+  titleBG = 'bg-green-500',
   size = 'md',
   children,
 }: NodeType) => {
   return (
     <div
-      className={`rounded-md bg-white shadow-xl border ${
-        size === 'md' ? 'w-96' : ''
-      }`}
+      className={cn(
+        'rounded-md bg-white shadow-xl border',
+        size === 'md' && 'w-96',
+      )}
     >
-      <p
-        className={`rounded-t-md px-2 py-1 bg-${titleBG}-500 text-white text-sm`}
-      >
+      <p className={cn('rounded-t-md px-2 py-1 text-white text-sm', titleBG)}>
         {title}
       </p>
       <div className="p-2">{children}</div>

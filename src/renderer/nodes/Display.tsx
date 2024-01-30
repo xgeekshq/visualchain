@@ -11,7 +11,7 @@ export default function Display() {
   const store = useStore(selector, shallow);
 
   return (
-    <Node title="Output" titleBG="purple" size="auto">
+    <Node title="Output" titleBG="bg-purple-500" size="auto">
       {store.completionType !== 'openAIImages' ? (
         <p className="text-lg font-bold">{store.outputString}</p>
       ) : (

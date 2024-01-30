@@ -74,7 +74,7 @@ export default function CodeBlock({ data }) {
   };
 
   return (
-    <Node title="Generated Code" titleBG="gray" size="auto">
+    <Node title="Generated Code" titleBG="bg-gray-500" size="auto">
       <div className="flex flex-col gap-2">
         <CopyBlock
           text={data.code}

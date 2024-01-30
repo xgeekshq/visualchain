@@ -23,7 +23,7 @@ export default function OpenAICompletion({ id, data }) {
   );
 
   return (
-    <Node title="OpenAI Completion" titleBG="blue">
+    <Node title="OpenAI Completion" titleBG="bg-blue-500">
       <CustomHandle
         className="w-2 h-2"
         type="target"

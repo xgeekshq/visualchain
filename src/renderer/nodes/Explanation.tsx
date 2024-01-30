@@ -10,7 +10,7 @@ export default function Explanation() {
   const store = useStore(selector, shallow);
 
   return (
-    <Node title="Code Explanation" titleBG="purple" size="auto">
+    <Node title="Code Explanation" titleBG="bg-purple-500" size="auto">
       <p className=" text-lg font-bold">{store.explanation}</p>
     </Node>
   );

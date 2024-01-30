@@ -23,7 +23,7 @@ export default function OpenAIImages({ id, data }) {
   );
 
   return (
-    <Node title="OpenAI Images" titleBG="yellow">
+    <Node title="OpenAI Images" titleBG="bg-yellow-500">
       <CustomHandle
         className="w-2 h-2"
         type="target"

@@ -19,7 +19,7 @@ export default function CodeTypeSelector({ id }) {
   const { setLanguage } = useStore(selector(id), shallow);
 
   return (
-    <Node title="Code Selection" titleBG="red">
+    <Node title="Code Selection" titleBG="bg-red-500">
       <CustomHandle
         className="w-2 h-2"
         type="target"
