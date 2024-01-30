@@ -1,4 +1,5 @@
 import { shallow } from 'zustand/shallow';
+import { Position } from 'reactflow';
 import CustomHandle from '../components/Handler';
 import useStore from '../store';
 import Node from '../components/Node/Node';
@@ -20,12 +21,7 @@ export default function CodeTypeSelector({ id }) {
 
   return (
     <Node title="Code Selection" titleBG="bg-red-500">
-      <CustomHandle
-        className="w-2 h-2"
-        type="target"
-        position="top"
-        isConnectable={2}
-      />
+      <CustomHandle type="target" position={Position.Top} isConnectable={2} />
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-bold" htmlFor="selectModel">
@@ -44,9 +40,8 @@ export default function CodeTypeSelector({ id }) {
       </div>
 
       <CustomHandle
-        className="w-2 h-2"
         type="source"
-        position="bottom"
+        position={Position.Bottom}
         isConnectable={2}
       />
     </Node>

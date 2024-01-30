@@ -1,4 +1,11 @@
-export function initJSOpenAI({ apiKey }: { apiKey: string }) {
+import {
+  InitOpenAIType,
+  OpenAICompletionType,
+  OpenAIImageCompletionType,
+  OpenAITranscriptionType,
+} from '../types/FunctionTypes';
+
+export function initJSOpenAI({ apiKey }: Omit<InitOpenAIType, 'language'>) {
   return `
 const OpenAI = require('openai');
 const fs = require('fs');
@@ -12,11 +19,7 @@ export function openAIJSCompletion({
   model,
   temperature,
   prompt,
-}: {
-  model: string;
-  temperature: number;
-  prompt: string;
-}) {
+}: Omit<OpenAICompletionType, 'language'>) {
   return `
 async function main() {
 	const chatCompletion = await client.chat.completions.create({
@@ -38,13 +41,7 @@ export function openAIJSImageCompletion({
   prompt,
   height,
   width,
-}: {
-  model: string;
-  numImages: number;
-  prompt: string;
-  height: number;
-  width: number;
-}) {
+}: Omit<OpenAIImageCompletionType, 'language'>) {
   return `
 async function main() {	
 const image = await client.images.generate({
@@ -63,10 +60,7 @@ main();
 export function openAIJSTranscription({
   filePath,
   model,
-}: {
-  filePath: string;
-  model: string;
-}) {
+}: Omit<OpenAITranscriptionType, 'language'>) {
   return `
 async function main() {	
 const transcription = await client.audio.transcriptions.create({

@@ -1,4 +1,5 @@
 import { shallow } from 'zustand/shallow';
+import { Position } from 'reactflow';
 import useStore from '../store';
 import CustomHandle from '../components/Handler';
 import Node from '../components/Node/Node';
@@ -14,12 +15,7 @@ export default function OpenAITranscription({ id, data }) {
 
   return (
     <Node title="OpenAI Transcription" titleBG="bg-blue-500">
-      <CustomHandle
-        className="w-2 h-2"
-        type="target"
-        position="top"
-        isConnectable={1}
-      />
+      <CustomHandle type="target" position={Position.Top} isConnectable={1} />
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-bold" htmlFor="filePath">
@@ -36,9 +32,8 @@ export default function OpenAITranscription({ id, data }) {
       </div>
 
       <CustomHandle
-        className="w-2 h-2"
         type="source"
-        position="bottom"
+        position={Position.Bottom}
         isConnectable={2}
       />
     </Node>

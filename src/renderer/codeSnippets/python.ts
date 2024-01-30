@@ -1,4 +1,11 @@
-export function initPYOpenAI({ apiKey }: { apiKey: string }) {
+import {
+  InitOpenAIType,
+  OpenAICompletionType,
+  OpenAIImageCompletionType,
+  OpenAITranscriptionType,
+} from '../types/FunctionTypes';
+
+export function initPYOpenAI({ apiKey }: Omit<InitOpenAIType, 'language'>) {
   return `
 from openai import OpenAI
   
@@ -10,11 +17,7 @@ export function openAIPYCompletion({
   model,
   temperature,
   prompt,
-}: {
-  model: string;
-  temperature: number;
-  prompt: string;
-}) {
+}: Omit<OpenAICompletionType, 'language'>) {
   return `
 chat_completion = client.chat.completions.create(
   messages=[{'role': 'user', 'content': '${prompt}'}],
@@ -32,13 +35,7 @@ export function openAIPYImageCompletion({
   prompt,
   height,
   width,
-}: {
-  model: string;
-  numImages: number;
-  prompt: string;
-  height: number;
-  width: number;
-}) {
+}: Omit<OpenAIImageCompletionType, 'language'>) {
   return `
 chat_completion = client.images.generate(
 	model='${model}',
@@ -54,10 +51,7 @@ print(chat_completion.data[0].url)
 export function openAIPYTranscription({
   filePath,
   model,
-}: {
-  filePath: string;
-  model: string;
-}) {
+}: Omit<OpenAITranscriptionType, 'language'>) {
   return `
 audio_file = open('${filePath}', 'rb')
 transcript = client.audio.transcriptions.create(

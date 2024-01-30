@@ -1,3 +1,4 @@
+import { Position } from 'reactflow';
 import CustomHandle from '../components/Handler';
 
 export default function Start() {
@@ -9,9 +10,8 @@ export default function Start() {
       </div>
 
       <CustomHandle
-        className="w-2 h-2"
         type="source"
-        position="bottom"
+        position={Position.Bottom}
         isConnectable={1}
       />
     </div>
