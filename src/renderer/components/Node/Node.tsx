@@ -2,7 +2,7 @@ import React from 'react';
 
 type NodeType = {
   title: string;
-  titleBG: 'green' | 'blue';
+  titleBG?: 'green' | 'blue' | 'yellow';
   children: React.ReactNode;
 };
 

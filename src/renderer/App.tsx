@@ -198,7 +198,6 @@ export default function App() {
       }
     }
 
-    // console.log(myCode);
     store.updateData(myCode);
     store.createNode('codeBlock');
   };

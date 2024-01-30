@@ -18,8 +18,6 @@ export function initOpenAI({
   apiKey: string;
   language: 'js' | 'py';
 }) {
-  console.log('OLA', apiKey, language);
-
   switch (language) {
     case 'js': {
       return initJSOpenAI({ apiKey });
@@ -68,7 +66,6 @@ export function openAIImageCompletion({
   width: number;
   language: 'js' | 'py';
 }) {
-  console.log('??', numImages);
   switch (language) {
     case 'js': {
       return openAIJSImageCompletion({
