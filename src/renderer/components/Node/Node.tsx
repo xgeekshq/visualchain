@@ -13,7 +13,7 @@ const NODE_SIZE = {
   sm: 'w-42',
   md: 'w-96',
   lg: 'w-[600px]',
-  xl: 'w-[760px]',
+  xl: 'w-auto',
 };
 
 const Node = ({
