@@ -1,8 +1,7 @@
-import React from 'react';
-import { Handle } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import useStore from '../store';
 import CustomHandle from '../components/Handler';
+import Node from '../components/Node/Node';
 
 const selector = (id) => (store) => ({
   setModel: (e) => store.updateNode(id, { model: e.target.value }),
@@ -24,71 +23,97 @@ export default function OpenAIImages({ id, data }) {
   );
 
   return (
-    <div className="rounded-md bg-white shadow-xl border">
-      <p className={'rounded-t-md px-2 py-1 bg-yellow-500 text-white text-sm'}>
-        OpenAIImages
-      </p>
-      <label className="flex flex-col px-2 py-1">
-        <p className="text-xs font-bold mb-2">Model</p>
-        <select name="selectModel" onChange={setModel}>
-          {models.map((model) => (
-            <option value={model.value}>{model.name}</option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col px-2 py-1">
-        <p className="text-xs font-bold mb-2">Prompt</p>
-        <textarea
-          className="nodrag border"
-          value={data.prompt}
-          onChange={setPrompt}
-          rows={4}
-          cols={40}
-        />
-      </label>
-      <label className="flex flex-col px-2 py-1">
-        <p className="text-xs font-bold mb-2">Number of Images</p>
-        <input
-          className="nodrag border"
-          type="number"
-          min={0}
-          max={4}
-          value={data.numImages}
-          onChange={setNumImages}
-        />
-      </label>
-      <label className="flex flex-col px-2 py-1">
-        <p className="text-xs font-bold mb-2">Height</p>
-        <input
-          className="nodrag border"
-          type="number"
-          min={0}
-          value={data.height}
-          onChange={setHeight}
-        />
-      </label>
-      <label className="flex flex-col px-2 py-1">
-        <p className="text-xs font-bold mb-2">Width</p>
-        <input
-          className="nodrag border"
-          type="number"
-          min={0}
-          value={data.width}
-          onChange={setWidth}
-        />
-      </label>
-      <CustomHandle
-        className="w-2 h-2"
-        type="source"
-        position="bottom"
-        isConnectable={2}
-      />
+    <Node title="OpenAI Images" titleBG="bg-yellow-500">
       <CustomHandle
         className="w-2 h-2"
         type="target"
         position="top"
         isConnectable={1}
       />
-    </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold" htmlFor="selectModel">
+            Model
+          </label>
+          <select
+            name="selectModel"
+            id="selectModel"
+            onChange={setModel}
+            className="nodrag border w-full rounded"
+          >
+            {models.map((model) => (
+              <option value={model.value}>{model.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold" htmlFor="prompt">
+            Prompt
+          </label>
+          <textarea
+            name="prompt"
+            id="prompt"
+            className="nodrag border w-full rounded px-2"
+            value={data.prompt}
+            onChange={setPrompt}
+            rows={4}
+            cols={40}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold" htmlFor="nrImages">
+            Number of Images
+          </label>
+          <input
+            name="nrImages"
+            id="nrImages"
+            className="nodrag border w-full rounded pl-2"
+            type="number"
+            min={0}
+            max={4}
+            value={data.numImages}
+            onChange={setNumImages}
+          />
+        </div>
+        <div className="flex flex-row gap-3">
+          <div className="flex flex-1 flex-col gap-2">
+            <label className="text-xs font-bold" htmlFor="width">
+              Width
+            </label>
+            <input
+              name="width"
+              id="width"
+              className="nodrag border w-full rounded pl-2"
+              type="number"
+              min={0}
+              value={data.width}
+              onChange={setWidth}
+            />
+          </div>
+          <div className="flex flex-1 flex-col gap-2">
+            <label className="text-xs font-bold" htmlFor="height">
+              Height
+            </label>
+            <input
+              name="height"
+              id="height"
+              className="nodrag border w-full rounded pl-2"
+              type="number"
+              min={0}
+              value={data.height}
+              onChange={setHeight}
+            />
+          </div>
+        </div>
+      </div>
+
+      <CustomHandle
+        className="w-2 h-2"
+        type="source"
+        position="bottom"
+        isConnectable={2}
+      />
+    </Node>
   );
 }

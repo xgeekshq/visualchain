@@ -1,6 +1,8 @@
+import Node from '../components/Node/Node';
+
 export default function Tutorial() {
   return (
-    <div className="rounded-md bg-white shadow-xl border-2 p-2 w-96">
+    <Node>
       <p>
         Here is <strong>VisualChain</strong>, to start please drag the AI
         components from the sidebar.
@@ -10,6 +12,6 @@ export default function Tutorial() {
         correct just hit the <strong>Run</strong> button and you will see magic
         happen.
       </p>
-    </div>
+    </Node>
   );
 }

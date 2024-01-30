@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver';
 import { shallow } from 'zustand/shallow';
 import OpenAI from 'openai';
 import useStore from '../store';
+import Node from '../components/Node/Node';
 
 function download(myCode, language) {
   const file = new Blob([myCode], { type: 'text/plain;charset=utf-8' });
@@ -49,8 +50,23 @@ const selector = (store) => ({
   explanation: store.explanation,
   createNode: store.createNode,
 });
+
 export default function CodeBlock({ data }) {
   const store = useStore(selector, shallow);
+
+  const handleDownload = () => {
+    download(store.data, store.language);
+  };
+
+  const handleExecution = async () => {
+    const result = await window.electron.execBananas({
+      code: store.data,
+      language: store.language,
+    });
+
+    store.updateOutputString(result);
+    store.createNode('display');
+  };
 
   const createExplanationNode = () => {
     store.createNode('explanation');
@@ -58,43 +74,38 @@ export default function CodeBlock({ data }) {
   };
 
   return (
-    <div className="rounded-md bg-white shadow-xl border-1">
-      <p className="rounded-t-md px-2 py-1 bg-gray-500 text-white text-sm">
-        Generated Code
-      </p>
-      <CopyBlock
-        text={data.code}
-        language={data.language ?? 'py'}
-        showLineNumbers
-        theme={dracula}
-      />
-      <div className="flex gap-4 py-2 justify-center">
-        <button
-          className="border bg-white rounded-md shadow-sm p-2"
-          onClick={() => download(store.data, store.language)}
-        >
-          Download
-        </button>
-        <button
-          className="border bg-white rounded-md shadow-sm p-2"
-          onClick={async () => {
-            const result = await window.electron.execBananas({
-              code: store.data,
-              language: store.language,
-            });
-            store.updateOutputString(result);
-            store.createNode('display');
-          }}
-        >
-          Execute
-        </button>
-        <button
-          className="border bg-white rounded-md shadow-sm p-2"
-          onClick={createExplanationNode}
-        >
-          Explain
-        </button>
+    <Node title="Generated Code" titleBG="bg-gray-500" size="lg">
+      <div className="flex flex-col gap-2">
+        <CopyBlock
+          text={data.code}
+          language={data.language ?? 'py'}
+          showLineNumbers
+          theme={dracula}
+        />
+        <div className="flex flex-row gap-3 justify-center">
+          <button
+            type="button"
+            className="border bg-white rounded-md shadow-sm p-2"
+            onClick={handleDownload}
+          >
+            Download
+          </button>
+          <button
+            type="button"
+            className="border bg-white rounded-md shadow-sm p-2"
+            onClick={handleExecution}
+          >
+            Execute
+          </button>
+          <button
+            type="button"
+            className="border bg-white rounded-md shadow-sm p-2"
+            onClick={createExplanationNode}
+          >
+            Explain
+          </button>
+        </div>
       </div>
-    </div>
+    </Node>
   );
 }
