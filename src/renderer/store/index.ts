@@ -1,4 +1,4 @@
-import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
+import { applyNodeChanges, applyEdgeChanges, Node, Edge } from 'reactflow';
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import {
@@ -8,7 +8,10 @@ import {
   openAITranscription,
 } from '../codeSnippets/general';
 
-interface VisualchainState {}
+interface VisualchainState {
+  nodes: Node[];
+  edges: Edge[];
+}
 
 const useStore = create<VisualchainState>((set, get) => {
   const getNode = (id: string) => {
@@ -115,7 +118,7 @@ const useStore = create<VisualchainState>((set, get) => {
         case 'openAICompletion': {
           const data = {
             model: 'gpt-3.5-turbo-1106',
-            temperature: 0,
+            temperature: 0.7,
             prompt: '',
             fn: openAICompletion,
           };
@@ -165,6 +168,9 @@ const useStore = create<VisualchainState>((set, get) => {
           };
           set({ nodes: [...get().nodes, { id, type, data, position }] });
           break;
+        }
+        default: {
+          console.error('Unknown Node Type!');
         }
       }
     },

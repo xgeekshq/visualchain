@@ -1,34 +1,51 @@
-import React, { useMemo } from 'react';
-import { getConnectedEdges, Handle, useNodeId, useStore } from 'reactflow';
+import { useMemo } from 'react';
+import {
+  getConnectedEdges,
+  Handle,
+  HandleType,
+  Position,
+  useNodeId,
+  useStore,
+} from 'reactflow';
 
 const selector = (s) => ({
   nodeInternals: s.nodeInternals,
   edges: s.edges,
 });
 
-function CustomHandle(props) {
+type CustomHandleType = {
+  isConnectable: Function | number;
+  type: HandleType;
+  position: Position;
+};
+
+function CustomHandle({ isConnectable, type, position }: CustomHandleType) {
   const { nodeInternals, edges } = useStore(selector);
   const nodeId = useNodeId();
 
   const isHandleConnectable = useMemo(() => {
-    if (typeof props.isConnectable === 'function') {
-      const node = nodeInternals.get(nodeId);
-      const connectedEdges = getConnectedEdges([node], edges);
+    const node = nodeInternals.get(nodeId);
+    const connectedEdges = getConnectedEdges([node], edges);
 
-      return props.isConnectable({ node, connectedEdges });
+    if (typeof isConnectable === 'function') {
+      return isConnectable({ node, connectedEdges });
     }
 
-    if (typeof props.isConnectable === 'number') {
-      const node = nodeInternals.get(nodeId);
-      const connectedEdges = getConnectedEdges([node], edges);
-
-      return connectedEdges.length < props.isConnectable;
+    if (typeof isConnectable === 'number') {
+      return connectedEdges.length < isConnectable;
     }
 
-    return props.isConnectable;
-  }, [nodeInternals, edges, nodeId, props.isConnectable]);
+    return isConnectable;
+  }, [nodeInternals, edges, nodeId, isConnectable]);
 
-  return <Handle {...props} isConnectable={isHandleConnectable} />;
+  return (
+    <Handle
+      type={type}
+      position={position}
+      isConnectable={isHandleConnectable}
+      className="w-2 h-2"
+    />
+  );
 }
 
 export default CustomHandle;
