@@ -82,6 +82,7 @@ export default function App() {
 
       store.createNode(type, position);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [reactFlowInstance],
   );
 
