@@ -39,7 +39,9 @@ export default function OpenAICompletion({ id, data }) {
             className="nodrag border w-full rounded"
           >
             {models.map((model) => (
-              <option value={model.value}>{model.name}</option>
+              <option key={model.value} value={model.value}>
+                {model.name}
+              </option>
             ))}
           </select>
         </div>

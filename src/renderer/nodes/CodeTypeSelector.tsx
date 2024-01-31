@@ -34,7 +34,9 @@ export default function CodeTypeSelector({ id }) {
           onChange={setLanguage}
         >
           {models.map((model) => (
-            <option value={model.value}>{model.name}</option>
+            <option key={model.value} value={model.value}>
+              {model.name}
+            </option>
           ))}
         </select>
       </div>

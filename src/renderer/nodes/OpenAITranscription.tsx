@@ -6,7 +6,7 @@ import Node from '../components/Node/Node';
 
 const selector = (id) => (store) => ({
   setFilePath: (e) => {
-    store.updateNode(id, { filePath: e.target.files[0].name });
+    store.updateNode(id, { filePath: e.target.files[0].path });
   },
 });
 
